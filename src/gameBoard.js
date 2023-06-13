@@ -15,8 +15,26 @@ class GameBoard {
     return arr;
   }
 
-  placeShip([x, y]) {
-    // find the object value that has x,y , then set its isplaced value to true
+  placeShip(arr) {
+    // this.gameBoard.forEach((element) => {
+    //   if (element.isPlaced === false) {
+    //     return element;
+    //   }
+    //   return 2;
+    // });
+    // const searchIndex = this.gameBoard.map((e) => e.coordinate).indexOf([0,0]);
+    // const obj = test[searchIndex].coordinate;
+    // obj.isPlaced = true;
+    // return searchIndex;
+    // for (const  of this.gameBoard) {
+    //   if (value.coordinate === [4, 3]) {
+    //     return value.coordinate;
+    //   }
+    // }
+    const items = this.gameBoard;
+    const test = items.filter((item) => item.coordinate === arr);
+		test.isPlaced = true
+    return test;
   }
 }
 
