@@ -16,49 +16,53 @@ class GameBoard {
   }
 
   placeShip(arr, axis, length) {
-    const ship = new Ship(length, arr);
+    if (arr[0] > 10 || arr[1] > 10) {
+      return 'out of bounds';
+    }
+    const ship = new Ship(length);
     const items = this.gameBoard;
     const test = items.filter(
-      (item) =>
-        JSON.stringify(item.coordinate) === JSON.stringify(ship.position)
+      (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
     );
     const newTest = [];
-    newTest.push(ship.position);
+    newTest.push(test[0]);
     if (axis === 'vertical') {
       for (let i = 1; i < length; i++) {
-        if (test[0].isPlaced === true) {
-          break;
-        } else {
-          newTest.push([test[0].coordinate[0] + i, test[0].coordinate[1]]);
+        const test2 = items.filter(
+          (item) =>
+            JSON.stringify(item.coordinate) ===
+            JSON.stringify([test[0].coordinate[0], test[0].coordinate[1] + i])
+        );
+
+        if (newTest[newTest.length - 1].isPlaced === true) {
+          return 'ship is here already';
         }
+        newTest.push(test2[0]);
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i++) {
-        if (test[0].isPlaced === true) {
-          break;
-        } else {
-          newTest.push([test[0].coordinate[1], test[0].coordinate[0] + i]);
+        const test2 = items.filter(
+          (item) =>
+            JSON.stringify(item.coordinate) ===
+            JSON.stringify([test[0].coordinate[1] + i, test[0].coordinate[0]])
+        );
+
+        if (newTest[newTest.length - 1].isPlaced === true) {
+          return 'ship is here already';
         }
+        newTest.push(test2[0]);
       }
     }
-    test[0].isPlaced = true;
-    for (let x = 0; x <= newTest.length; x++) {
-      const filteredItem = items.filter(
-        (item) =>
-          Array.isArray(item.coordinate) &&
-          item.coordinate.length === 2 &&
-          item.coordinate[0] === newTest[x] &&
-          item.coordinate[1] === newTest[x + 1]
-      );
-			console.log(filteredItem)
-			//find some way to find newTest items from the gameboard, and set their isShot peorpty to true. maybe do it from the pushes ^
-      filteredItem.isShot = true;
-    }
+    newTest.forEach((element) => {
+      element.isPlaced = true;
+    });
+    console.log(newTest);
     ship.position = newTest;
     return ship;
   }
 
   receiveAttack(arr, ship) {
+    // find a way to get all of the ships on the board and their coords, and if arr matches any of them, do a missedShot. otherwise, do ship.hit()
     const items = this.gameBoard;
     const test = items.filter(
       (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)

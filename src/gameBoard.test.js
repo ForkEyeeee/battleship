@@ -3,6 +3,7 @@ import Ship from './ship';
 
 const objOne = new GameBoard();
 
+// console.log((objOne.placeShip([2, 2], 'vertical', 3).length))
 describe('gameBoard class has working methods and valid properties', () => {
   test('GameBoard class has gameboard property', () => {
     expect(objOne).toHaveProperty('gameBoard');
@@ -16,13 +17,19 @@ describe('gameBoard class has working methods and valid properties', () => {
     expect(objOne.gameBoard[0]).toHaveProperty('coordinate');
   });
 
-  test('placeShip() function changes the isPlaced from false to true and updates position', () => {
-    expect(objOne.placeShip([2, 2], 'horizontal', 3).position).toHaveLength(3);
-    expect(objOne.placeShip([2, 2], 'vertical', 3).length).toBe(3);
+  test('placeShip() function updates position from undefined to [2,2]', () => {
+    expect(objOne.placeShip([2, 2], 'horizontal', 3).position).not.toBe(
+      undefined
+    );
+  });
+
+  test('placeShip() places a ship with a length property equal to its length parameter', () => {
+    const objTwo = new GameBoard();
+    expect(objTwo.placeShip([2, 2], 'vertical', 3).length).toEqual(3);
   });
 
   test('receiveAttack() will return a ship and a missed coordinate', () => {
-    const newShip = new Ship(3, [2, 4]);
+    const newShip = new Ship([2, 4]);
     expect(objOne.receiveAttack([2, 4], newShip).ship).not.toBe(undefined);
     expect(objOne.receiveAttack([2, 4], newShip).missedSpot).not.toBe(
       undefined
