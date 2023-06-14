@@ -15,26 +15,41 @@ class GameBoard {
     return arr;
   }
 
-  placeShip(arr) {
-    // this.gameBoard.forEach((element) => {
-    //   if (element.isPlaced === false) {
-    //     return element;
-    //   }
-    //   return 2;
-    // });
-    // const searchIndex = this.gameBoard.map((e) => e.coordinate).indexOf([0,0]);
-    // const obj = test[searchIndex].coordinate;
-    // obj.isPlaced = true;
-    // return searchIndex;
-    // for (const  of this.gameBoard) {
-    //   if (value.coordinate === [4, 3]) {
-    //     return value.coordinate;
-    //   }
-    // }
+  placeShip(arr, axis, length) {
+    const ship = new Ship(length, arr);
     const items = this.gameBoard;
-    const test = items.filter((item) => item.coordinate === arr);
-		test.isPlaced = true
-    return test;
+    const test = items.filter(
+      (item) =>
+        JSON.stringify(item.coordinate) === JSON.stringify(ship.position)
+    );
+    const newTest = [];
+    newTest.push(ship.position);
+    test[0].isPlaced = true;
+    if (axis === 'vertical') {
+      for (let i = 1; i < length; i++) {
+        newTest.push([test[0].coordinate[0] + i, test[0].coordinate[1]]);
+      }
+    } else if (axis === 'horizontal') {
+      for (let i = 1; i < length; i++) {
+        newTest.push([test[0].coordinate[1], test[0].coordinate[0] + i]);
+      }
+    }
+    ship.position = newTest;
+    return ship;
+  }
+
+  receiveAttack(arr, ship) {
+    const items = this.gameBoard;
+    const test = items.filter(
+      (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
+    );
+    if (test !== undefined) {
+      ship.hit();
+    }
+    return {
+      ship,
+      missedSpot: arr,
+    };
   }
 }
 
