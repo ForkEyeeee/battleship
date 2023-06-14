@@ -9,7 +9,7 @@ class GameBoard {
     const arr = [];
     for (let i = 0; i <= 10; i++) {
       for (let j = 0; j <= 10; j++) {
-        arr.push({ coordinate: [i, j], isPlaced: false });
+        arr.push({ coordinate: [i, j], isPlaced: false, isShot: false });
       }
     }
     return arr;
@@ -24,15 +24,35 @@ class GameBoard {
     );
     const newTest = [];
     newTest.push(ship.position);
-    test[0].isPlaced = true;
     if (axis === 'vertical') {
       for (let i = 1; i < length; i++) {
-        newTest.push([test[0].coordinate[0] + i, test[0].coordinate[1]]);
+        if (test[0].isPlaced === true) {
+          break;
+        } else {
+          newTest.push([test[0].coordinate[0] + i, test[0].coordinate[1]]);
+        }
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i++) {
-        newTest.push([test[0].coordinate[1], test[0].coordinate[0] + i]);
+        if (test[0].isPlaced === true) {
+          break;
+        } else {
+          newTest.push([test[0].coordinate[1], test[0].coordinate[0] + i]);
+        }
       }
+    }
+    test[0].isPlaced = true;
+    for (let x = 0; x <= newTest.length; x++) {
+      const filteredItem = items.filter(
+        (item) =>
+          Array.isArray(item.coordinate) &&
+          item.coordinate.length === 2 &&
+          item.coordinate[0] === newTest[x] &&
+          item.coordinate[1] === newTest[x + 1]
+      );
+			console.log(filteredItem)
+			//find some way to find newTest items from the gameboard, and set their isShot peorpty to true. maybe do it from the pushes ^
+      filteredItem.isShot = true;
     }
     ship.position = newTest;
     return ship;
