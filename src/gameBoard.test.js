@@ -1,9 +1,9 @@
+import { experiments } from 'webpack';
 import GameBoard from './gameBoard';
 import Ship from './ship';
 
 const objOne = new GameBoard();
 
-// console.log((objOne.placeShip([2, 2], 'vertical', 3).length))
 describe('gameBoard class has working methods and valid properties', () => {
   test('GameBoard class has gameboard property', () => {
     expect(objOne).toHaveProperty('gameBoard');
@@ -28,17 +28,34 @@ describe('gameBoard class has working methods and valid properties', () => {
     expect(objTwo.placeShip([2, 2], 'vertical', 3).length).toEqual(3);
   });
 
-  test('receiveAttack() will return a ship and a missed coordinate', () => {
-    const newShip = new Ship([2, 4]);
-    expect(objOne.receiveAttack([2, 4], newShip).ship).not.toBe(undefined);
-    expect(objOne.receiveAttack([2, 4], newShip).missedSpot).not.toBe(
-      undefined
-    );
+  test('receiveAttack() will return a ship if the matching coords are passed ', () => {
+    const objFive = new GameBoard();
+    objFive.placeShip([2, 2], 'horizontal', 3).length;
+    expect(objFive.receiveAttack([2, 2]).ship).not.toBe(undefined);
+  });
+
+  test('receiveAttack() will return a missedCoord if theres no matching coords', () => {
+    const test = new GameBoard();
+    test.placeShip([4, 4], 'horizontal', 3);
+    expect(test.receiveAttack([2, 2]).missedSpot).not.toBe(undefined);
+    expect(test.receiveAttack([2, 4]).missedSpot).toStrictEqual([2, 4]);
   });
 
   test('receiveAttack() will increase the hits of a ship', () => {
-    const newShip = new Ship(3, [2, 4]);
-    const oldHits = newShip.hits;
-    expect(objOne.receiveAttack([2, 4], newShip).ship.hits).toBe(oldHits + 1);
+    const newShip = new Ship(3);
+    newShip.hit();
+    const objThree = new GameBoard();
+    objThree.placeShip([2, 2], 'horizontal', 3).length;
+    expect(objThree.receiveAttack([2, 2]).ship.hits).toBe(1);
+  });
+
+  test('all ships sunk', () => {
+    const objFive = GameBoard();
+    objFive.placeShip([2, 2], 'vertical', 3);
+    objFive.receiveAttack([2, 2]);
+    objFive.receiveAttack([2, 3]);
+    objFive.receiveAttack([2, 4]);
+
+    expect(objFive.isAllShipsSunk()).toBe(true);
   });
 });
