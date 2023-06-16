@@ -57,22 +57,38 @@ describe('GameBoard factory has working methods and valid properties', () => {
   test('receiveAttack() will return a ship if the matching coords are passed', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.player.gameBoard);
     expect(
-      gameBoard.receiveAttack([2, 2], player.player.gameBoard).ship
-    ).not.toBe(undefined);
-    gameBoard.placeShip([2, 2], 'vertical', 3, player.enemy.gameBoard);
-    expect(gameBoard.receiveAttack([7, 2], player.enemy.gameBoard).ship).toBe(
-      undefined
-    );
+      gameBoard.receiveAttack(
+        [2, 2],
+        player.enemy.gameBoard,
+        player.player.gameBoard
+      ).ship
+    ).toBe(undefined);
+    gameBoard.placeShip([7, 2], 'vertical', 3, player.enemy.gameBoard);
+    expect(
+      gameBoard.receiveAttack(
+        [7, 2],
+        player.enemy.gameBoard,
+        player.player.gameBoard
+      ).ship
+    ).toBeDefined();
   });
 
   test('receiveAttack() will return a missedSpot if there are no matching coords', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
     expect(
-      gameBoard.receiveAttack([2, 2], player.enemy.gameBoard).missedSpot
-    ).toBe(undefined);
+      gameBoard.receiveAttack(
+        [2, 2],
+        player.enemy.gameBoard,
+        player.player.gameBoard
+      ).missedSpot
+    ).toStrictEqual([2, 2]);
     expect(
       JSON.stringify(
-        gameBoard.receiveAttack([6, 2], player.player.gameBoard).missedSpot
+        gameBoard.receiveAttack(
+          [6, 2],
+          player.enemy.gameBoard,
+          player.player.gameBoard
+        ).missedSpot
       )
     ).toBe(JSON.stringify([6, 2]));
   });
@@ -80,24 +96,62 @@ describe('GameBoard factory has working methods and valid properties', () => {
   test('receiveAttack() will increase the hits of a ship', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
     expect(
-      gameBoard.receiveAttack([2, 2], player.enemy.gameBoard).ship.hits
+      gameBoard.receiveAttack(
+        [2, 2],
+        player.enemy.gameBoard,
+        player.player.gameBoard
+      ).ship.hits
     ).toBe(1);
   });
 
   test('all ships sunk for a given board', () => {
     gameBoard.placeShip([2, 2], 'vertical', 3, player.enemy.gameBoard);
-    gameBoard.receiveAttack([2, 2], player.enemy.gameBoard);
-    gameBoard.receiveAttack([2, 2], player.player.gameBoard);
-    gameBoard.receiveAttack([2, 3], player.enemy.gameBoard);
-    gameBoard.receiveAttack([2, 2], player.player.gameBoard);
-    gameBoard.receiveAttack([2, 4], player.enemy.gameBoard);
-    gameBoard.receiveAttack([2, 2], player.player.gameBoard);
-    expect(gameBoard.isAllShipsSunk(player.enemy.gameBoard)).toBe(true);
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.enemy.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.player.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 3],
+      player.enemy.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.player.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 4],
+      player.enemy.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.player.gameBoard,
+      player.player.gameBoard
+    );
+    expect(
+      gameBoard.isAllShipsSunk(player.enemy.gameBoard, player.player.gameBoard)
+    ).toBe(true);
   });
 
   test("the CPU runs receiveAttack() to randomly select a space on the player's map", () => {
-    gameBoard.receiveAttack([2, 2], player.enemy.gameBoard);
-    gameBoard.receiveAttack([2, 2], player.player.gameBoard);
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.enemy.gameBoard,
+      player.player.gameBoard
+    );
+    gameBoard.receiveAttack(
+      [2, 2],
+      player.player.gameBoard,
+      player.player.gameBoard
+    );
     const filteredBoard = player.player.gameBoard.filter(
       (item) => item.isShot === true
     );

@@ -20,13 +20,32 @@ import Player from './player';
 // console.log(objFive.isAllShipsSunk())
 
 const test = new Player('jeff');
-test.GameBoard.placeShip([2, 2], 'vertical', 3, test.enemy.gameBoard);
-// test.GameBoard.placeShip([2, 2], 'horizontal', 2, test.player.gameBoard);
+// console.log(
+//   test.GameBoard.receiveAttack(
+//     [2, 2],
+//     test.enemy.gameBoard,
+//     test.player.gameBoard
+//   ).ship
+// );
+// test.GameBoard.receiveAttack(
+//   [2, 2],
+//   test.enemy.gameBoard,
+//   test.player.gameBoard
+// );
+const test2 = new GameBoard();
+
+
+
+
+test2.receiveAttack([2, 2], test.enemy.gameBoard, test.player.gameBoard)
+test2.receiveAttack([5, 7], test.enemy.gameBoard, test.player.gameBoard)
+test2.receiveAttack([2, 6], test.enemy.gameBoard, test.player.gameBoard)
+
 // test.GameBoard.receiveAttack([2, 2], test.enemy.gameBoard);
 // test.GameBoard.receiveAttack([2, 2], test.player.gameBoard);
 // test.GameBoard.receiveAttack([7, 1], test.enemy.gameBoard);
 // test.GameBoard.receiveAttack([9, 2], test.player.gameBoard);
-console.log(test)
+console.log(test);
 
 // // console.log(test.GameBoard.currentTurn);
 

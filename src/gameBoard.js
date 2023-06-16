@@ -78,61 +78,55 @@ function GameBoard() {
     return ship;
   }
 
-  function receiveAttack(coordinate, board) {
-    if (currentTurn === 'CPU') {
-      const items = board;
-      let randomCoordinate = generateRandomCoordinate();
-      while (items[randomCoordinate].isShot === true) {
-        randomCoordinate = generateRandomCoordinate();
+  function receiveAttack(coordinate, board, playerBoard) {
+    function receiveAttackCPU() {
+      if (currentTurn === 'CPU') {
+        const items = board;
+        let randomCoordinate = generateRandomCoordinate();
+        while (items[randomCoordinate].isShot === true) {
+          randomCoordinate = generateRandomCoordinate();
+        }
+        const enemyGameBoard = playerBoard;
+
+        enemyGameBoard[randomCoordinate].isShot = true;
+
+        if (enemyGameBoard[randomCoordinate].ship !== undefined) {
+          enemyGameBoard[randomCoordinate].ship.hit();
+        }
+
+        if (enemyGameBoard[randomCoordinate].isPlaced === true) {
+          return {
+            ship: enemyGameBoard[randomCoordinate].ship,
+          };
+        }
+
+        currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
       }
-      const enemyGameBoard = board;
-
-      enemyGameBoard[randomCoordinate].isShot = true;
-
-      if (enemyGameBoard[randomCoordinate].ship !== undefined) {
-        enemyGameBoard[randomCoordinate].ship.hit();
-      }
-
-      if (enemyGameBoard[randomCoordinate].isPlaced === true) {
-        return {
-          ship: enemyGameBoard[randomCoordinate].ship,
-        };
-      }
-
-      currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
-
       return {
         currentTurn,
         missedSpot: coordinate,
       };
     }
-
     const items = board;
-    const cellsWithShip = items.filter((item) => item.ship !== undefined);
-    if (cellsWithShip.length !== 0) {
-      const targetCell = items.find(
-        (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
-      );
 
-      if (targetCell.ship !== undefined) {
-        targetCell.ship.hit();
-      }
+    const targetCell = items.find(
+      (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
+    );
+
+    if (targetCell.ship !== undefined) {
+      targetCell.ship.hit();
+      receiveAttackCPU(playerBoard);
+    } else if (targetCell.isShot === false) {
       targetCell.isShot = true;
+      receiveAttackCPU(playerBoard);
+    } else {
+      return 'this spot is already hit';
     }
 
     currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
 
-    const hitShip = cellsWithShip.find(
-      (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
-    );
-
-    if (hitShip !== undefined) {
-      return {
-        ship: hitShip.ship,
-      };
-    }
-
     return {
+      ship: targetCell.ship,
       currentTurn,
       missedSpot: coordinate,
     };
