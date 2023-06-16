@@ -15,16 +15,24 @@ function GameBoard() {
     }
     return arr;
   }
+  let currentTurn;
+  const enemyGameBoard = {
+    gameBoard: generateGameBoard(),
+    name: 'CPU',
+  };
 
-  const gameBoard = generateGameBoard();
+  const playerGameBoard = {
+    gameBoard: generateGameBoard(),
+    name: 'Player',
+  };
 
-  function placeShip(arr, axis, length) {
+  function placeShip(arr, axis, length, board) {
     if (arr[0] + length > 10 || arr[1] + length > 10) {
       return 'out of bounds';
     }
     const ship = Ship(length);
-    const items = gameBoard;
-    const test = items.filter(
+    const items = board;
+    const test = items.gameBoard.filter(
       (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
     );
     const newTest = [];
@@ -32,7 +40,7 @@ function GameBoard() {
 
     if (axis === 'vertical') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.filter(
+        const test2 = items.gameBoard.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([test[0].coordinate[0], test[0].coordinate[1] + i])
@@ -45,7 +53,7 @@ function GameBoard() {
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.filter(
+        const test2 = items.gameBoard.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([test[0].coordinate[1] + i, test[0].coordinate[0]])
@@ -62,16 +70,14 @@ function GameBoard() {
       element.isPlaced = true;
       element.ship = ship;
     });
-    console.log(newTest);
     return ship;
   }
 
-  function receiveAttack(arr) {
-    const items = gameBoard;
-    let test = items.filter((item) => item.ship !== undefined);
-
+  function receiveAttack(arr, board) {
+    const items = board;
+    let test = items.gameBoard.filter((item) => item.ship !== undefined);
     if (test.length !== 0) {
-      test = items.filter(
+      test = items.gameBoard.filter(
         (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
       );
       if (test.length !== 0 && test[0].ship !== undefined) {
@@ -79,22 +85,31 @@ function GameBoard() {
       }
       test[0].isShot = true;
     }
-    console.log(items);
 
+    // Set current turn
+
+    // Check if there is a ship at the first test position
     if (test[0].ship !== undefined) {
+      this.currentTurn = this.playerGameBoard.name;
       return {
         ship: test[0].ship,
       };
     }
+    this.currentTurn = this.enemyGameBoard.name;
     return {
+      currentTurn: this.currentTurn,
       missedSpot: test[0].coordinate,
     };
   }
 
-  function isAllShipsSunk() {
+  function isAllShipsSunk(board) {
     let isSunk = true;
-    const items = gameBoard;
+    const items = board;
     const test = items.filter((item) => item.ship !== undefined);
+    if (test.length === 0) {
+      isSunk = false;
+      return isSunk;
+    }
     test.forEach((element) => {
       if (element.ship.sink === false) {
         isSunk = false;
@@ -104,7 +119,10 @@ function GameBoard() {
   }
 
   return {
-    gameBoard,
+    currentTurn,
+    generateGameBoard,
+    playerGameBoard,
+    enemyGameBoard,
     placeShip,
     receiveAttack,
     isAllShipsSunk,

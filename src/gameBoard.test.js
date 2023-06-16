@@ -1,61 +1,86 @@
-import { experiments } from 'webpack';
 import GameBoard from './gameBoard';
-import Ship from './ship';
 
-const objOne = new GameBoard();
+let objOne = new GameBoard();
+beforeEach(() => {
+  objOne = new GameBoard();
+});
 
-describe('gameBoard class has working methods and valid properties', () => {
-  test('GameBoard class has gameboard property', () => {
-    expect(objOne).toHaveProperty('gameBoard');
+describe('gameBoard factory has working methods and valid properties', () => {
+  test('GameBoard factory object has all properties', () => {
+    expect(objOne).toHaveProperty('currentTurn');
+    expect(objOne).toHaveProperty('enemyGameBoard');
+    expect(objOne).toHaveProperty('generateGameBoard');
+    expect(objOne).toHaveProperty('isAllShipsSunk');
+    expect(objOne).toHaveProperty('placeShip');
+    expect(objOne).toHaveProperty('playerGameBoard');
+    expect(objOne).toHaveProperty('receiveAttack');
   });
 
-  test('GameBoard class has a full length array of 121', () => {
-    expect(objOne.gameBoard.length).toBe(121);
+  test('gameBoard factory has a full length array of 121 for both player and enemy', () => {
+    expect(objOne.playerGameBoard.gameBoard.length).toBe(121);
+    expect(objOne.enemyGameBoard.gameBoard.length).toBe(121);
   });
 
-  test('first gameBoard coordinate has a coordinate property', () => {
-    expect(objOne.gameBoard[0]).toHaveProperty('coordinate');
+  test('placeShip() function updates a ships position with a length of 3 from undefined to [2,2], [2,3], [2,4]', () => {
+    expect(
+      objOne.placeShip([2, 2], 'horizontal', 3, objOne.playerGameBoard).position
+    ).not.toBe(undefined);
+    expect(
+      objOne.placeShip([2, 2], 'horizontal', 3, objOne.playerGameBoard).position
+    ).not.toBe([2, 2], [2, 3], [2, 4]);
+    expect(
+      objOne.placeShip([6, 2], 'horizontal', 3, objOne.enemyGameBoard).position
+    ).not.toBe(undefined);
+    expect(
+      objOne.placeShip([6, 2], 'horizontal', 3, objOne.enemyGameBoard).position
+    ).not.toBe([6, 2], [7, 3], [8, 4]);
   });
 
-  test('placeShip() function updates position from undefined to [2,2]', () => {
-    expect(objOne.placeShip([2, 2], 'horizontal', 3).position).not.toBe(
+  test('placeShip() places a ship with a length property equal to 3', () => {
+    expect(
+      objOne.placeShip([2, 2], 'vertical', 3, objOne.playerGameBoard).length
+    ).toEqual(3);
+    expect(
+      objOne.placeShip([6, 2], 'vertical', 3, objOne.enemyGameBoard).length
+    ).toEqual(3);
+  });
+
+  test('receiveAttack() will return a ship if the matching coords are passed ', () => {
+    objOne.placeShip([2, 2], 'horizontal', 3, objOne.playerGameBoard);
+    expect(objOne.receiveAttack([2, 2], objOne.playerGameBoard).ship).not.toBe(
+      undefined
+    );
+    objOne.placeShip([6, 2], 'horizontal', 3, objOne.enemyGameBoard);
+    expect(objOne.receiveAttack([2, 2], objOne.enemyGameBoard).ship).toBe(
       undefined
     );
   });
 
-  test('placeShip() places a ship with a length property equal to its length parameter', () => {
-    const objTwo = new GameBoard();
-    expect(objTwo.placeShip([2, 2], 'vertical', 3).length).toEqual(3);
-  });
-
-  test('receiveAttack() will return a ship if the matching coords are passed ', () => {
-    const objFive = new GameBoard();
-    objFive.placeShip([2, 2], 'horizontal', 3).length;
-    expect(objFive.receiveAttack([2, 2]).ship).not.toBe(undefined);
-  });
-
   test('receiveAttack() will return a missedCoord if theres no matching coords', () => {
-    const test = new GameBoard();
-    test.placeShip([4, 4], 'horizontal', 3);
-    expect(test.receiveAttack([2, 2]).missedSpot).not.toBe(undefined);
-    expect(test.receiveAttack([2, 4]).missedSpot).toStrictEqual([2, 4]);
+    objOne.placeShip([2, 2], 'horizontal', 3, objOne.playerGameBoard);
+    expect(
+      objOne.receiveAttack([2, 2], objOne.playerGameBoard).missedSpot
+    ).toBe(undefined);
+    expect(
+      JSON.stringify(
+        objOne.receiveAttack([6, 2], objOne.playerGameBoard).missedSpot
+      )
+    ).toBe(JSON.stringify([6, 2]));
   });
 
   test('receiveAttack() will increase the hits of a ship', () => {
-    const newShip = new Ship(3);
-    newShip.hit();
-    const objThree = new GameBoard();
-    objThree.placeShip([2, 2], 'horizontal', 3).length;
-    expect(objThree.receiveAttack([2, 2]).ship.hits).toBe(1);
+    objOne.placeShip([2, 2], 'horizontal', 3, objOne.enemyGameBoard);
+    objOne.receiveAttack([2, 2], objOne.enemyGameBoard);
+    expect(objOne.receiveAttack([2, 2], objOne.enemyGameBoard).ship.hits).toBe(
+      2
+    );
   });
 
   test('all ships sunk', () => {
-    const objFive = GameBoard();
-    objFive.placeShip([2, 2], 'vertical', 3);
-    objFive.receiveAttack([2, 2]);
-    objFive.receiveAttack([2, 3]);
-    objFive.receiveAttack([2, 4]);
-
-    expect(objFive.isAllShipsSunk()).toBe(true);
+    objOne.placeShip([2, 2], 'vertical', 3, objOne.enemyGameBoard);
+    objOne.receiveAttack([2, 2], objOne.enemyGameBoard);
+    objOne.receiveAttack([2, 3], objOne.enemyGameBoard);
+    objOne.receiveAttack([2, 4], objOne.enemyGameBoard);
+    expect(objOne.isAllShipsSunk(objOne.enemyGameBoard.gameBoard)).toBe(true);
   });
 });

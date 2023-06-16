@@ -5,6 +5,7 @@ function Ship(length) {
     sink: false,
     position: undefined,
     hit() {
+      // hit() will attack other ships, so it will increase the hits property of other ships
       if (this.hits >= length) {
         this.sink = true;
       } else {
