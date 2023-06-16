@@ -5,11 +5,11 @@ function Player(playerName) {
   return {
     player: {
       gameBoard: test.generateGameBoard(),
-			name: playerName
+      name: playerName,
     },
     enemy: {
       gameBoard: test.generateGameBoard(),
-			name: "CPU"
+      name: 'CPU',
     },
     GameBoard: test,
   };

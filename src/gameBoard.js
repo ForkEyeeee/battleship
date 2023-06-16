@@ -1,11 +1,16 @@
 import Ship from './ship';
 
 function GameBoard() {
+  function generateRandomCoordinate() {
+    const randomNumber = Math.floor(Math.random() * 121);
+    return randomNumber;
+  }
+
   function generateGameBoard() {
-    const arr = [];
-    for (let i = 0; i <= 10; i++) {
-      for (let j = 0; j <= 10; j++) {
-        arr.push({
+    const board = [];
+    for (let i = 0; i <= 10; i += 1) {
+      for (let j = 0; j <= 10; j += 1) {
+        board.push({
           coordinate: [i, j],
           isPlaced: false,
           isShot: false,
@@ -13,102 +18,129 @@ function GameBoard() {
         });
       }
     }
-    return arr;
+    return board;
   }
-  const currentTurn = 'Player';
-  
 
-  function placeShip(arr, axis, length, board) {
-    if (arr[0] + length > 10 || arr[1] + length > 10) {
+  let currentTurn = 'Player';
+
+  function placeShip(startCoordinate, axis, length, board) {
+    if (startCoordinate[0] + length > 10 || startCoordinate[1] + length > 10) {
       return 'out of bounds';
     }
     const ship = Ship(length);
     const items = board;
-    const test =  items.filter(
-      (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
-    );
-    const newTest = [];
-    newTest.push(test[0]);
+    const startCell = items.filter(
+      (item) =>
+        JSON.stringify(item.coordinate) === JSON.stringify(startCoordinate)
+    )[0];
+
+    const cellsToPlace = [startCell];
 
     if (axis === 'vertical') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.filter(
+        const cell = items.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
-            JSON.stringify([test[0].coordinate[0], test[0].coordinate[1] + i])
-        );
+            JSON.stringify([
+              startCell.coordinate[0],
+              startCell.coordinate[1] + i,
+            ])
+        )[0];
 
-        if (newTest[newTest.length - 1].isPlaced === true) {
+        if (cell.isPlaced === true) {
           return 'ship is here already';
         }
-        newTest.push(test2[0]);
+        cellsToPlace.push(cell);
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.filter(
+        const cell = items.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
-            JSON.stringify([test[0].coordinate[1] + i, test[0].coordinate[0]])
-        );
+            JSON.stringify([
+              startCell.coordinate[1] + i,
+              startCell.coordinate[0],
+            ])
+        )[0];
 
-        if (newTest[newTest.length - 1].isPlaced === true) {
+        if (cell.isPlaced === true) {
           return 'ship is here already';
         }
-        newTest.push(test2[0]);
+        cellsToPlace.push(cell);
       }
     }
-    ship.position = newTest.map((item) => item.coordinate);
-    newTest.forEach((element) => {
-      element.isPlaced = true;
-      element.ship = ship;
+
+    ship.position = cellsToPlace.map((cell) => cell.coordinate);
+    cellsToPlace.forEach((cell) => {
+      cell.isPlaced = true;
+      cell.ship = ship;
     });
     return ship;
   }
 
-  function receiveAttack(arr, board) {
-    const items = board;
-    let test = items.filter((item) => item.ship !== undefined);
-    if (test.length !== 0) {
-      test = items.filter(
-        (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
-      );
-      if (test.length !== 0 && test[0].ship !== undefined) {
-        test[0].ship.hit();
+  function receiveAttack(coordinate, board) {
+    if (currentTurn === 'CPU') {
+      const items = board;
+      let randomCoordinate = generateRandomCoordinate();
+      while (items[randomCoordinate].isShot === true) {
+        randomCoordinate = generateRandomCoordinate();
       }
-      test[0].isShot = true;
-    }
+      const enemyGameBoard = board;
 
-    if (this.currentTurn === "Player") {
-      this.currentTurn = "CPU";
-    } else {
-      this.currentTurn = "Player";
-    }
+      enemyGameBoard[randomCoordinate].isShot = true;
 
-    if (test.length !== 0) {
+      if (enemyGameBoard[randomCoordinate].ship !== undefined) {
+        enemyGameBoard[randomCoordinate].ship.hit();
+      }
+
+      if (enemyGameBoard[randomCoordinate].isPlaced === true) {
+        return {
+          ship: enemyGameBoard[randomCoordinate].ship,
+        };
+      }
+
+      currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
+
       return {
-        ship: test[0].ship,
+        currentTurn,
+        missedSpot: coordinate,
       };
     }
+
+    const items = board;
+    const cellsWithShip = items.filter((item) => item.ship !== undefined);
+    if (cellsWithShip.length !== 0) {
+      const targetCell = items.find(
+        (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
+      );
+
+      if (targetCell.ship !== undefined) {
+        targetCell.ship.hit();
+      }
+      targetCell.isShot = true;
+    }
+
+    currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
+
+    const hitShip = cellsWithShip.find(
+      (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
+    );
+
+    if (hitShip !== undefined) {
+      return {
+        ship: hitShip.ship,
+      };
+    }
+
     return {
-      currentTurn: this.currentTurn,
-      missedSpot: arr,
+      currentTurn,
+      missedSpot: coordinate,
     };
   }
 
   function isAllShipsSunk(board) {
-    let isSunk = true;
-    const items = board;
-    const test = items.filter((item) => item.ship !== undefined);
-    if (test.length === 0) {
-      isSunk = false;
-      return isSunk;
-    }
-    test.forEach((element) => {
-      if (element.ship.sink === false) {
-        isSunk = false;
-      }
-    });
-    return isSunk;
+    const ships = board.filter((item) => item.ship !== undefined);
+    return ships.every((ship) => ship.ship.sink === true);
   }
 
   return {
