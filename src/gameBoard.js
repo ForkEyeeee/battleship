@@ -15,16 +15,8 @@ function GameBoard() {
     }
     return arr;
   }
-  let currentTurn;
-  const enemyGameBoard = {
-    gameBoard: generateGameBoard(),
-    name: 'CPU',
-  };
-
-  const playerGameBoard = {
-    gameBoard: generateGameBoard(),
-    name: 'Player',
-  };
+  const currentTurn = 'Player';
+  
 
   function placeShip(arr, axis, length, board) {
     if (arr[0] + length > 10 || arr[1] + length > 10) {
@@ -32,7 +24,7 @@ function GameBoard() {
     }
     const ship = Ship(length);
     const items = board;
-    const test = items.gameBoard.filter(
+    const test =  items.filter(
       (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
     );
     const newTest = [];
@@ -40,7 +32,7 @@ function GameBoard() {
 
     if (axis === 'vertical') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.gameBoard.filter(
+        const test2 = items.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([test[0].coordinate[0], test[0].coordinate[1] + i])
@@ -53,7 +45,7 @@ function GameBoard() {
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i++) {
-        const test2 = items.gameBoard.filter(
+        const test2 = items.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([test[0].coordinate[1] + i, test[0].coordinate[0]])
@@ -75,9 +67,9 @@ function GameBoard() {
 
   function receiveAttack(arr, board) {
     const items = board;
-    let test = items.gameBoard.filter((item) => item.ship !== undefined);
+    let test = items.filter((item) => item.ship !== undefined);
     if (test.length !== 0) {
-      test = items.gameBoard.filter(
+      test = items.filter(
         (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
       );
       if (test.length !== 0 && test[0].ship !== undefined) {
@@ -86,19 +78,20 @@ function GameBoard() {
       test[0].isShot = true;
     }
 
-    // Set current turn
+    if (this.currentTurn === "Player") {
+      this.currentTurn = "CPU";
+    } else {
+      this.currentTurn = "Player";
+    }
 
-    // Check if there is a ship at the first test position
-    if (test[0].ship !== undefined) {
-      this.currentTurn = this.playerGameBoard.name;
+    if (test.length !== 0) {
       return {
         ship: test[0].ship,
       };
     }
-    this.currentTurn = this.enemyGameBoard.name;
     return {
       currentTurn: this.currentTurn,
-      missedSpot: test[0].coordinate,
+      missedSpot: arr,
     };
   }
 
@@ -121,8 +114,6 @@ function GameBoard() {
   return {
     currentTurn,
     generateGameBoard,
-    playerGameBoard,
-    enemyGameBoard,
     placeShip,
     receiveAttack,
     isAllShipsSunk,

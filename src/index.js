@@ -19,25 +19,42 @@ import Player from './player';
 
 // console.log(objFive.isAllShipsSunk())
 
-// const test = new Player('jeff');
-// console.log(test);
 
-const test2 = new GameBoard()
-console.log(test2)
+console.log(new Player('jeff'));
+
+
+console.log(new GameBoard())
+// test.GameBoard.placeShip([2, 2], 'vertical', 3, test.enemy.gameBoard);
+// // console.log(test.GameBoard.currentTurn);
+
+
+// test.GameBoard.receiveAttack([2, 2], test.enemy.gameBoard);
+// test.GameBoard.receiveAttack([2, 3], test.enemy.gameBoard);
+// test.GameBoard.receiveAttack([2, 4], test.enemy.gameBoard);
+
+// console.log(test.GameBoard.isAllShipsSunk(test.enemy.gameBoard))
+
+// console.log(test.GameBoard.currentTurn);
+
+// test.GameBoard.receiveAttack([3, 5], test.GameBoard.enemyGameBoard);
+// console.log(test.GameBoard.currentTurn);
+
+// test.GameBoard.receiveAttack([7, 2], test.GameBoard.enemyGameBoard);
+// console.log(test.GameBoard.currentTurn);
+
+// test.GameBoard.receiveAttack([1, 0], test.GameBoard.enemyGameBoard);
+
+// console.log(test.GameBoard.currentTurn);
+
+
 
 // console.log(test.playerGameBoard)
-// test.GameBoard.placeShip([2, 2], 'horizontal', 2, test.GameBoard.enemyGameBoard)
 // test.GameBoard.placeShip([4, 3], 'horizontal', 2, test.GameBoard.enemyGameBoard);
 // test.GameBoard.placeShip([3, 5], 'horizontal', 2, test.GameBoard.enemyGameBoard);
-// test.GameBoard.receiveAttack([2, 2], test.GameBoard.enemyGameBoard);
-// test.GameBoard.receiveAttack([4, 3], test.GameBoard.enemyGameBoard);
-// test.GameBoard.receiveAttack([3, 5], test.GameBoard.enemyGameBoard);
-// test.GameBoard.receiveAttack([7, 2], test.GameBoard.enemyGameBoard);
-// test.GameBoard.receiveAttack([1, 0], test.GameBoard.enemyGameBoard);
+
 
 
 // test.GameBoard.playerGameBoard[24].ship.hit()
 // test.GameBoard.receiveAttack([2, 2], test.GameBoard.enemyGameBoard);
 // console.log(test);
 // test.playerGameBoard.receiveAttack([2, 2])
-test2.isAllShipsSunk(test2.enemyGameBoard.gameBoard)

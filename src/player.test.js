@@ -1,11 +1,19 @@
 import Player from './player';
 
-const newPlayers = new Player('jeff', 'matt')
+let playersObj = new Player();
+
+beforeEach(() => {
+  playersObj = new Player();
+});
 
 describe('player factory has working methods and valid properties', () => {
   test('player factory has all properties and methods', () => {
-    expect(newPlayers).toHaveProperty('player');
-    expect(newPlayers).toHaveProperty('enemy');
-    expect(newPlayers).toHaveProperty('GameBoard');
+    expect(playersObj).toHaveProperty('GameBoard');
+    expect(playersObj).toHaveProperty('enemy');
+    expect(playersObj).toHaveProperty('player');
   });
+});
+test('player factory enemy and player has a full length array of 121', () => {
+  expect(playersObj.enemy.gameBoard.length).toBe(121);
+  expect(playersObj.enemy.gameBoard.length).toBe(121);
 });
