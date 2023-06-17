@@ -1,0 +1,16 @@
+#flex-container {
+	display: flex;
+}
+
+#main-container, #enemy-container{
+	display: grid;
+	width: 700px;
+	height: 700px;
+	margin: 2rem;
+	gap: 2px;
+}
+
+.grid-item {
+	border: 1px solid rgba(0, 0, 0, 0.8);
+}
+

@@ -14,6 +14,6 @@ describe('player factory has working methods and valid properties', () => {
   });
 });
 test('player factory enemy and player has a full length array of 121', () => {
-  expect(playersObj.enemy.gameBoard.length).toBe(121);
-  expect(playersObj.enemy.gameBoard.length).toBe(121);
+  expect(playersObj.enemy.gameBoard.length).toBe(100);
+  expect(playersObj.player.gameBoard.length).toBe(100);
 });

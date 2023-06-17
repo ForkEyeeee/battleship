@@ -2,14 +2,14 @@ import Ship from './ship';
 
 function GameBoard() {
   function generateRandomCoordinate() {
-    const randomNumber = Math.floor(Math.random() * 121);
+    const randomNumber = Math.floor(Math.random() * 100);
     return randomNumber;
   }
 
   function generateGameBoard() {
     const board = [];
-    for (let i = 0; i <= 10; i += 1) {
-      for (let j = 0; j <= 10; j += 1) {
+    for (let i = 0; i < 10; i += 1) {
+      for (let j = 0; j < 10; j += 1) {
         board.push({
           coordinate: [i, j],
           isPlaced: false,
@@ -80,45 +80,36 @@ function GameBoard() {
 
   function receiveAttack(coordinate, board, playerBoard) {
     function receiveAttackCPU() {
-      if (currentTurn === 'CPU') {
-        const items = board;
-        let randomCoordinate = generateRandomCoordinate();
-        while (items[randomCoordinate].isShot === true) {
-          randomCoordinate = generateRandomCoordinate();
-        }
-        const enemyGameBoard = playerBoard;
-
-        enemyGameBoard[randomCoordinate].isShot = true;
-
-        if (enemyGameBoard[randomCoordinate].ship !== undefined) {
-          enemyGameBoard[randomCoordinate].ship.hit();
-        }
-
-        if (enemyGameBoard[randomCoordinate].isPlaced === true) {
-          return {
-            ship: enemyGameBoard[randomCoordinate].ship,
-          };
-        }
-
-        currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
+      const items = board;
+      let randomCoordinate = generateRandomCoordinate();
+      while (items[randomCoordinate].isShot === true) {
+        randomCoordinate = generateRandomCoordinate();
       }
+      const enemyGameBoard = playerBoard;
+
+      // enemyGameBoard[randomCoordinate].isShot = true;
+
+      if (enemyGameBoard[randomCoordinate].ship !== undefined) {
+        enemyGameBoard[randomCoordinate].ship.hit();
+      }
+
       return {
-        currentTurn,
-        missedSpot: coordinate,
+        randomSpace: enemyGameBoard[randomCoordinate],
       };
     }
-    const items = board;
 
+    const items = board;
+    let getRandomSpot;
     const targetCell = items.find(
       (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
     );
 
     if (targetCell.ship !== undefined) {
       targetCell.ship.hit();
-      receiveAttackCPU(playerBoard);
+      getRandomSpot = receiveAttackCPU(playerBoard);
     } else if (targetCell.isShot === false) {
-      targetCell.isShot = true;
-      receiveAttackCPU(playerBoard);
+      // targetCell.isShot = true;
+      getRandomSpot = receiveAttackCPU(playerBoard);
     } else {
       return 'this spot is already hit';
     }
@@ -126,6 +117,7 @@ function GameBoard() {
     currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
 
     return {
+      randomSpot: getRandomSpot,
       ship: targetCell.ship,
       currentTurn,
       missedSpot: coordinate,
