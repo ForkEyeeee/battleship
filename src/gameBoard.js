@@ -24,7 +24,11 @@ function GameBoard() {
   // let currentTurn = 'Player';
 
   function placeShip(startCoordinate, axis, length, board) {
-    if (startCoordinate[0] + length > 10 || startCoordinate[1] + length > 10) {
+    // pass board to place ship on
+    if (
+      (startCoordinate[0] + length > 10 && axis === 'horizontal') ||
+      (startCoordinate[1] + length > 10 && axis === 'vertical')
+    ) {
       return 'out of bounds';
     }
     const ship = Ship(length);
@@ -76,7 +80,7 @@ function GameBoard() {
       cell.ship = ship;
     });
 
-    ship.position = cellsToPlace.map((cell) => cell.coordinate);
+    // ship.position = cellsToPlace.map((cell) => cell.coordinate);
 
     return {
       ship,
@@ -99,6 +103,7 @@ function GameBoard() {
 
     if (playerBoard[randomCoordinate].ship !== undefined) {
       playerBoard[randomCoordinate].ship.hit();
+      playerBoard[randomCoordinate].isShot = true;
     } else {
       playerBoard[randomCoordinate].isShot = true;
     }

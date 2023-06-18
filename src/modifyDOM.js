@@ -1,8 +1,8 @@
 import Player from './player';
+import Ship from './ship';
 
 const getRandomSpace = (event, newBoard) => {
   const gameBoard = newBoard;
-  const { currentPlayer } = newBoard;
   const getClickedCell = event.target.dataset.id;
   const str = getClickedCell;
   const arr = str.split(',').map(Number);
@@ -11,26 +11,16 @@ const getRandomSpace = (event, newBoard) => {
     (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
   );
 
-  const remainingSpaces = gameBoard.enemy.gameBoard.filter(
-    (item) => !item.isShot
-  );
-  // const randomIndex = Math.floor(Math.random() * remainingSpaces.length);
-  // const randomSpace = remainingSpaces[randomIndex];
-
   if (cellFromDataId.isShot === true) {
     alert('This spot on the enemy board has already been hit by you!.');
   } else {
-    event.target.style.backgroundColor = 'blue';
+    event.target.style.backgroundColor = 'red';
 
     gameBoard.gameBoard.receiveAttack(
       arr,
       gameBoard.enemy.gameBoard,
       gameBoard
     );
-
-    // if (getRandomAiHit.objGameBoard.currentPlayer === currentPlayer) {
-    //   alert('This spot on the ');
-    // }
 
     const { coordinate } =
       gameBoard.gameBoard.receiveAttackFromCPU(gameBoard).randomSpace;
@@ -40,20 +30,49 @@ const getRandomSpace = (event, newBoard) => {
       : coordinate;
 
     const element = document.querySelector(`[data-id="${coordinateString}"]`);
-		element.style.backgroundColor = 'red';
-    // if (getRandomAiHit.randomSpot.randomSpace.isShot === false) {
-    //   element.style.backgroundColor = 'red';
-    //   getRandomAiHit.randomSpot.randomSpace.isShot = true;
-    //   cellFromDataId.isShot = true; // Mark the cell as shot
-    // } else {
-    //   console.log(randomSpace);
-    //   getRandomSpace(event, newBoard); // Try again
-    // }
+    element.style.backgroundColor = 'blue';
+
+    console.log(newBoard);
   }
 };
 
-const buildGameBoard = () => {
-  const newBoard = new Player('jeff');
+const getCoordinates = (shipLength) => {
+  let coordinates = prompt(
+    `Enter the starting coordinate (x, y) for your ship of length ${shipLength}:`
+  );
+  coordinates = coordinates.split(',').map(Number);
+
+  while (coordinates.length !== 2 || coordinates.some(isNaN)) {
+    alert("Invalid coordinates. Please enter a coordinate pair, e.g., '4, 5'.");
+    coordinates = prompt(
+      `Enter the starting coordinate (x, y) for your ship of length ${shipLength}:`
+    );
+    coordinates = coordinates.split(',').map(Number);
+  }
+
+  return coordinates;
+};
+
+const getDirection = () => {
+  let direction = prompt("Enter ship direction ('horizontal' or 'vertical'):");
+  direction = direction.toLowerCase();
+
+  while (direction !== 'horizontal' && direction !== 'vertical') {
+    alert("Invalid direction. Please enter either 'horizontal' or 'vertical'.");
+    direction = prompt("Enter ship direction ('horizontal' or 'vertical'):");
+    direction = direction.toLowerCase();
+  }
+  return direction;
+};
+
+// Using the function
+// const coordinates = getCoordinates();
+// console.log(coordinates);
+
+const generatePlayerShips = () => {};
+const buildGameBoard = (player = 'jeff') => {
+  const newBoard = new Player(player);
+
   const getMainContainer = document.getElementById('main-container'); // create player board
   const getEnemyContainer = document.getElementById('enemy-container');
 
@@ -97,6 +116,66 @@ const buildGameBoard = () => {
       getEnemyContainer.appendChild(grids);
     }
   }
-};
+  const carrierShip = new Ship(5);
+  const battleShip = new Ship(4);
+  const destroyerShip = new Ship(3);
+  const submarineShip = new Ship(3);
+  const frigateShip = new Ship(2);
+  const getCarrierCoords = 0;
+  setTimeout(() => {
+    newBoard.gameBoard.placeShip(
+      [3, 3],
+      'vertical',
+      5,
+      newBoard.player.gameBoard
+    );
 
-export default buildGameBoard;
+    newBoard.gameBoard.placeShip(
+      [3, 1],
+      'vertical',
+      4,
+      newBoard.player.gameBoard
+    );
+
+    newBoard.gameBoard.placeShip(
+      [6, 6],
+      'vertical',
+      3,
+      newBoard.player.gameBoard
+    );
+
+    newBoard.gameBoard.placeShip(
+      [8, 4],
+      'vertical',
+      3,
+      newBoard.player.gameBoard
+    );
+
+    newBoard.gameBoard.placeShip(
+      [9, 7],
+      'vertical',
+      2,
+      newBoard.player.gameBoard
+    );
+
+    const items = newBoard.player.gameBoard.filter(
+      (item) => item.isPlaced === true
+    );
+
+    items.forEach((item) => {
+      // Convert the coordinates to a string format that matches the data-id attribute
+      const coordString = item.coordinate.join(',');
+
+      // Get the grid cell with this data-id
+      const cellElement = document.querySelector(`[data-id="${coordString}"]`);
+
+      // Now you can manipulate the cell element
+      if (cellElement) {
+        cellElement.style.backgroundColor = 'gray';
+      }
+    });
+  }, 0);
+
+  console.log(newBoard);
+};
+export { generatePlayerShips, buildGameBoard };

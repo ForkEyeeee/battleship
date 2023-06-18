@@ -1,5 +1,6 @@
 #flex-container {
 	display: flex;
+	justify-content: center;
 }
 
 #main-container, #enemy-container{
@@ -9,6 +10,27 @@
 	margin: 2rem;
 	gap: 2px;
 }
+
+div#ship-container {
+	display: flex;
+	justify-content: center;
+	border-style: solid;
+	height: 100px;
+	/* width: 50%; */
+}
+
+.cell {
+	width: 50px;
+	height: 50px;
+	background-color: gray;
+	border-style: solid;
+}
+
+.ship {
+  display: flex;
+}
+
+
 
 .grid-item {
 	border: 1px solid rgba(0, 0, 0, 0.8);
