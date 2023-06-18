@@ -21,7 +21,7 @@ function GameBoard() {
     return board;
   }
 
-  let currentTurn = 'Player';
+  // let currentTurn = 'Player';
 
   function placeShip(startCoordinate, axis, length, board) {
     if (startCoordinate[0] + length > 10 || startCoordinate[1] + length > 10) {
@@ -29,32 +29,33 @@ function GameBoard() {
     }
     const ship = Ship(length);
     const items = board;
-    const startCell = items.filter(
+    const startCell = items.find(
       (item) =>
         JSON.stringify(item.coordinate) === JSON.stringify(startCoordinate)
-    )[0];
+    );
 
     const cellsToPlace = [startCell];
 
     if (axis === 'vertical') {
-      for (let i = 1; i < length; i++) {
-        const cell = items.filter(
+      for (let i = 1; i < length; i += 1) {
+        const adjacentcell = items.find(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([
               startCell.coordinate[0],
               startCell.coordinate[1] + i,
             ])
-        )[0];
+        );
 
-        if (cell.isPlaced === true) {
-          return 'ship is here already';
+        if (adjacentcell.isPlaced === true) {
+          return 'ship is here already, cannot place ship';
         }
-        cellsToPlace.push(cell);
+
+        cellsToPlace.push(adjacentcell);
       }
     } else if (axis === 'horizontal') {
-      for (let i = 1; i < length; i++) {
-        const cell = items.filter(
+      for (let i = 1; i < length; i += 1) {
+        const adjacentcell = items.filter(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([
@@ -63,64 +64,23 @@ function GameBoard() {
             ])
         )[0];
 
-        if (cell.isPlaced === true) {
-          return 'ship is here already';
+        if (adjacentcell.isPlaced === true) {
+          return 'ship is here already, cannot place ship';
         }
-        cellsToPlace.push(cell);
+
+        cellsToPlace.push(adjacentcell);
       }
     }
-
-    ship.position = cellsToPlace.map((cell) => cell.coordinate);
     cellsToPlace.forEach((cell) => {
       cell.isPlaced = true;
       cell.ship = ship;
     });
-    return ship;
-  }
 
-  function receiveAttack(coordinate, board, playerBoard) {
-    function receiveAttackCPU() {
-      const items = board;
-      let randomCoordinate = generateRandomCoordinate();
-      while (items[randomCoordinate].isShot === true) {
-        randomCoordinate = generateRandomCoordinate();
-      }
-      const enemyGameBoard = playerBoard;
-
-      // enemyGameBoard[randomCoordinate].isShot = true;
-
-      if (enemyGameBoard[randomCoordinate].ship !== undefined) {
-        enemyGameBoard[randomCoordinate].ship.hit();
-      }
-
-      return {
-        randomSpace: enemyGameBoard[randomCoordinate],
-      };
-    }
-
-    const items = board;
-    let getRandomSpot;
-    const targetCell = items.find(
-      (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
-    );
-
-    if (targetCell.ship !== undefined) {
-      targetCell.ship.hit();
-      getRandomSpot = receiveAttackCPU(playerBoard);
-    } else if (targetCell.isShot === false) {
-      // targetCell.isShot = true;
-      getRandomSpot = receiveAttackCPU(playerBoard);
-    } else {
-      return 'this spot is already hit';
-    }
-
-    currentTurn = currentTurn === 'Player' ? 'CPU' : 'Player';
+    ship.position = cellsToPlace.map((cell) => cell.coordinate);
 
     return {
-      randomSpot: getRandomSpot,
-      ship: targetCell.ship,
-      currentTurn,
-      missedSpot: coordinate,
+      ship,
+      cellsToPlace,
     };
   }
 
@@ -129,11 +89,88 @@ function GameBoard() {
     return ships.every((ship) => ship.ship.sink === true);
   }
 
+  function receiveAttackFromCPU(gameBoard) {
+    // pass the entire gameboard, but only use the player part
+    const playerBoard = gameBoard.player.gameBoard;
+    let randomCoordinate = generateRandomCoordinate();
+    while (playerBoard[randomCoordinate].isShot === true) {
+      randomCoordinate = generateRandomCoordinate();
+    }
+
+    if (playerBoard[randomCoordinate].ship !== undefined) {
+      playerBoard[randomCoordinate].ship.hit();
+    } else {
+      playerBoard[randomCoordinate].isShot = true;
+    }
+
+    // if (isAllShipsSunk(playerBoard)) {
+    //   return `${gameBoard.currentPlayer} wins!`;
+    // }
+
+    if (gameBoard.currentPlayer === gameBoard.player.name) {
+      gameBoard.currentPlayer = gameBoard.enemy.name;
+    } else {
+      gameBoard.currentPlayer = gameBoard.player.name;
+    }
+
+    return {
+      randomSpace: playerBoard[randomCoordinate],
+      currentPlayer: gameBoard.currentPlayer,
+    };
+  }
+
+  function receiveAttack(coordinate, enemyboard, gameBoard) {
+    // pass the enemyboard and the entire gameboard
+    if (
+      coordinate[0] < 0 ||
+      coordinate[0] > 10 ||
+      coordinate[1] < 0 ||
+      coordinate[1] > 10
+    ) {
+      return 'out of bounds';
+    }
+    const objGameBoard = gameBoard;
+    const enemyCell = enemyboard.find(
+      (item) => JSON.stringify(item.coordinate) === JSON.stringify(coordinate)
+    );
+
+    if (enemyCell === undefined || enemyCell.isShot) {
+      // enemy cell is shot already or not found
+      return {
+        coordinate,
+        currentPlayer: objGameBoard.currentPlayer,
+      };
+    }
+
+    if (enemyCell.ship !== undefined) {
+      enemyCell.ship.hit();
+      enemyCell.isShot = true;
+    } else {
+      enemyCell.isShot = true;
+    }
+
+    // if (isAllShipsSunk(enemyboard)) {
+    //   return `${gameBoard.currentPlayer} wins!`;
+    // }
+
+    if (gameBoard.currentPlayer === objGameBoard.player.name) {
+      objGameBoard.currentPlayer = objGameBoard.enemy.name;
+    } else {
+      objGameBoard.currentPlayer = objGameBoard.player.name;
+    }
+
+    return {
+      // enemy cell was hit or shot and is found
+      enemyCell,
+      currentPlayer: objGameBoard.currentPlayer,
+    };
+  }
+
   return {
-    currentTurn,
     generateGameBoard,
     placeShip,
     receiveAttack,
+    receiveAttackFromCPU,
     isAllShipsSunk,
   };
 }

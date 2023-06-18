@@ -11,138 +11,85 @@ beforeEach(() => {
 
 describe('GameBoard factory has working methods and valid properties', () => {
   test('GameBoard factory object has all properties', () => {
-    expect(gameBoard).toHaveProperty('currentTurn');
     expect(gameBoard).toHaveProperty('generateGameBoard');
     expect(gameBoard).toHaveProperty('isAllShipsSunk');
     expect(gameBoard).toHaveProperty('placeShip');
     expect(gameBoard).toHaveProperty('receiveAttack');
   });
 
-  test("placeShip() function updates a ship's position with a length of 3 from undefined to [2,2], [2,3], [2,4]", () => {
+  test('placeShip() function returns objects', () => {
     expect(
-      gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard)
+      gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard).ship
         .position
-    ).not.toBe(undefined);
+    ).toBeDefined();
     expect(
-      gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard)
-        .position
-    ).not.toStrictEqual([
-      [2, 2],
-      [2, 3],
-      [2, 4],
-    ]);
+      gameBoard.placeShip([7, 7], 'horizontal', 3, player.enemy.gameBoard)
+        .cellsToPlace
+    ).toBeDefined();
     expect(
-      gameBoard.placeShip([6, 2], 'vertical', 3, player.enemy.gameBoard)
+      gameBoard.placeShip([6, 2], 'vertical', 3, player.player.gameBoard).ship
         .position
-    ).not.toBe(undefined);
+    ).toBeDefined();
     expect(
-      gameBoard.placeShip([6, 2], 'horizontal', 3, player.enemy.gameBoard)
-        .position
-    ).not.toStrictEqual([
-      [6, 2],
-      [7, 3],
-      [8, 4],
-    ]);
+      gameBoard.placeShip([6, 2], 'horizontal', 3, player.player.gameBoard)
+        .cellsToPlace
+    ).toBeDefined();
   });
 
-  test('placeShip() places a ship with a length property equal to 3', () => {
+  test('placeShip() returns ship with length property equal to length parameter', () => {
     expect(
-      gameBoard.placeShip([2, 2], 'vertical', 3, player.enemy.gameBoard).length
+      gameBoard.placeShip([2, 2], 'vertical', 3, player.player.gameBoard).ship
+        .length
     ).toEqual(3);
     expect(
-      gameBoard.placeShip([6, 2], 'vertical', 3, player.enemy.gameBoard).length
+      gameBoard.placeShip([6, 2], 'horizontal', 3, player.enemy.gameBoard).ship
+        .length
     ).toEqual(3);
   });
 
   test('receiveAttack() will return a ship if the matching coords are passed', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
     expect(
-      gameBoard.receiveAttack(
-        [2, 2],
-        player.enemy.gameBoard,
-        player.player.gameBoard
-      ).ship
+      gameBoard.receiveAttack([2, 2], player.enemy.gameBoard, player).enemyCell
     ).toBeDefined();
   });
 
-  test('receiveAttack() will not return a ship if matching coords arent passed', () => {
+  test('receiveAttack() will not return a ship if that ship was shot already', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
+    gameBoard.receiveAttack([4, 7], player.enemy.gameBoard, player);
     expect(
-      gameBoard.receiveAttack(
-        [7, 2],
-        player.enemy.gameBoard,
-        player.player.gameBoard
-      ).ship
-    ).toBe(undefined);
+      gameBoard.receiveAttack([4, 7], player.enemy.gameBoard, player).coordinate
+    ).toBeDefined();
   });
 
-  test('receiveAttack() will return a missedSpot if there are no matching coords', () => {
-    gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
+  test('receiveAttack() will return out of bounds if coordinate is not whtin 0,0 10,10', () => {
     expect(
-      gameBoard.receiveAttack(
-        [2, 2],
-        player.enemy.gameBoard,
-        player.player.gameBoard
-      ).missedSpot
-    ).toStrictEqual([2, 2]);
-    expect(
-      JSON.stringify(
-        gameBoard.receiveAttack(
-          [6, 2],
-          player.enemy.gameBoard,
-          player.player.gameBoard
-        ).missedSpot
-      )
-    ).toBe(JSON.stringify([6, 2]));
+      gameBoard.receiveAttack([11, 11], player.enemy.gameBoard, player)
+    ).toBe('out of bounds');
   });
 
   test('receiveAttack() will increase the hits of a ship', () => {
     gameBoard.placeShip([2, 2], 'horizontal', 3, player.enemy.gameBoard);
     expect(
-      gameBoard.receiveAttack(
-        [2, 2],
-        player.enemy.gameBoard,
-        player.player.gameBoard
-      ).ship.hits
+      gameBoard.receiveAttack([2, 2], player.enemy.gameBoard, player).enemyCell
+        .ship.hits
     ).toBe(1);
+  });
+
+  test('receiveAttackFromCPU() will randomly attack a player spot', () => {
+    expect(gameBoard.receiveAttackFromCPU(player).randomSpace).toBeDefined();
   });
 
   test('all ships sunk for a given board', () => {
     gameBoard.placeShip([2, 2], 'vertical', 3, player.player.gameBoard);
-    gameBoard.receiveAttack(
-      [2, 2],
-      player.enemy.gameBoard,
-      player.player.gameBoard
-    );
-
-    gameBoard.receiveAttack(
-      [2, 3],
-      player.enemy.gameBoard,
-      player.player.gameBoard
-    );
-
-    gameBoard.receiveAttack(
-      [2, 4],
-      player.enemy.gameBoard,
-      player.player.gameBoard
-    );
-
-    expect(
-      gameBoard.isAllShipsSunk(player.enemy.gameBoard, player.player.gameBoard)
-    ).toBe(true);
+    gameBoard.receiveAttack([2, 2], player.enemy.gameBoard, player);
+    gameBoard.receiveAttack([2, 3], player.enemy.gameBoard, player);
+    gameBoard.receiveAttack([2, 4], player.enemy.gameBoard, player);
+    expect(gameBoard.isAllShipsSunk(player.enemy.gameBoard)).toBe(true);
   });
 
   test("the CPU runs receiveAttack() to randomly select a space on the player's map", () => {
-    gameBoard.receiveAttack(
-      [2, 2],
-      player.enemy.gameBoard,
-      player.player.gameBoard
-    );
-    gameBoard.receiveAttack(
-      [2, 2],
-      player.player.gameBoard,
-      player.player.gameBoard
-    );
+    gameBoard.receiveAttackFromCPU(player);
     const filteredBoard = player.player.gameBoard.filter(
       (item) => item.isShot === true
     );

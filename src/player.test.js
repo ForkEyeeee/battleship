@@ -8,7 +8,7 @@ beforeEach(() => {
 
 describe('player factory has working methods and valid properties', () => {
   test('player factory has all properties and methods', () => {
-    expect(playersObj).toHaveProperty('GameBoard');
+    expect(playersObj).toHaveProperty('gameBoard');
     expect(playersObj).toHaveProperty('enemy');
     expect(playersObj).toHaveProperty('player');
   });

@@ -11,7 +11,9 @@ function Player(playerName) {
       gameBoard: test.generateGameBoard(),
       name: 'CPU',
     },
-    GameBoard: test,
+    gameBoard: test,
+
+		currentPlayer: playerName
   };
 }
 

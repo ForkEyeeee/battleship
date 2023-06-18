@@ -1,51 +1,56 @@
 import Player from './player';
 
 const getRandomSpace = (event, newBoard) => {
-	const getNewBoard = newBoard
+  const gameBoard = newBoard;
+  const { currentPlayer } = newBoard;
   const getClickedCell = event.target.dataset.id;
   const str = getClickedCell;
   const arr = str.split(',').map(Number);
-	console.log(getNewBoard.enemy.gameBoard.filter((item) => !item.isShot))
-	console.log(getNewBoard)
-	const remainingSpaces = getNewBoard.enemy.gameBoard.filter((item) => !item.isShot);
-	const randomIndex = Math.floor(Math.random() * remainingSpaces.length);
-	const randomSpace = remainingSpaces[randomIndex];
 
-  const cellFromDataId = getNewBoard.enemy.gameBoard.find(
+  const cellFromDataId = gameBoard.enemy.gameBoard.find(
     (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
   );
 
+  const remainingSpaces = gameBoard.enemy.gameBoard.filter(
+    (item) => !item.isShot
+  );
+  // const randomIndex = Math.floor(Math.random() * remainingSpaces.length);
+  // const randomSpace = remainingSpaces[randomIndex];
+
   if (cellFromDataId.isShot === true) {
-    // alert(`This spot has already been hit.`);
+    alert('This spot on the enemy board has already been hit by you!.');
   } else {
     event.target.style.backgroundColor = 'blue';
 
-    const getRandomAiHit = newBoard.GameBoard.receiveAttack(
+    gameBoard.gameBoard.receiveAttack(
       arr,
-      getNewBoard.enemy.gameBoard,
-      getNewBoard.player.gameBoard
+      gameBoard.enemy.gameBoard,
+      gameBoard
     );
 
-    const { coordinate } = getRandomAiHit.randomSpot.randomSpace;
+    // if (getRandomAiHit.objGameBoard.currentPlayer === currentPlayer) {
+    //   alert('This spot on the ');
+    // }
+
+    const { coordinate } =
+      gameBoard.gameBoard.receiveAttackFromCPU(gameBoard).randomSpace;
 
     const coordinateString = Array.isArray(coordinate)
       ? coordinate.join(',')
       : coordinate;
 
     const element = document.querySelector(`[data-id="${coordinateString}"]`);
-
-    if (getRandomAiHit.randomSpot.randomSpace.isShot === false) {
-      element.style.backgroundColor = 'red';
-      getRandomAiHit.randomSpot.randomSpace.isShot = true;
-      cellFromDataId.isShot = true; // Mark the cell as shot
-    } else {
-			console.log(randomSpace)
-      getRandomSpace(event, newBoard); // Try again
-    }
+		element.style.backgroundColor = 'red';
+    // if (getRandomAiHit.randomSpot.randomSpace.isShot === false) {
+    //   element.style.backgroundColor = 'red';
+    //   getRandomAiHit.randomSpot.randomSpace.isShot = true;
+    //   cellFromDataId.isShot = true; // Mark the cell as shot
+    // } else {
+    //   console.log(randomSpace);
+    //   getRandomSpace(event, newBoard); // Try again
+    // }
   }
 };
-
-
 
 const buildGameBoard = () => {
   const newBoard = new Player('jeff');

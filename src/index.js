@@ -4,6 +4,6 @@ import Ship from './ship';
 import Player from './player';
 import buildGameBoard from './modifyDOM';
 
-const test = new Player('jeff')
-// console.log(test)
+// const test = new Player('jeff');
+
 buildGameBoard()
