@@ -1,4 +1,4 @@
-import { buildGameBoard } from './modifyDOM';
+import { placeChosenShips } from './modifyDOM';
 
 // Get the modal
 const modalWindow = () => {
@@ -7,7 +7,6 @@ const modalWindow = () => {
   // Get the button that opens the modal
   const btn = document.getElementById('myBtn');
   const submitBtn = document.getElementById('submit-btn');
-  const resetBtn = document.getElementById('reset-btn');
 
   // Get the <span> element that closes the modal
   const span = document.getElementsByClassName('close')[0];
@@ -25,20 +24,21 @@ const modalWindow = () => {
   submitBtn.onclick = function () {
     modal.style.display = 'none';
   };
+
+  submitBtn.onclick = function (e) {
+    if (form.checkValidity()) {
+      e.preventDefault();
+      placeChosenShips();
+      form.reset();
+      modal.style.display = 'none';
+    }
+  };
+
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function (event) {
     if (event.target == modal) {
       modal.style.display = 'none';
     }
-
-    // form.addEventListener('submit', (e) => {
-    //   if (!form.checkValidity()) {
-    //     // e.preventDefault();
-    //     // The form is invalid - do something about it
-    //   } else {
-    //     e.preventDefault();
-    //   }
-    // });
   };
 };
 

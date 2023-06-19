@@ -2,11 +2,6 @@ import Player from './player';
 import getValues from './getUserInput';
 
 const newBoard = new Player('jeff');
-const form = document.getElementById('form-ship');
-const submitBtn = document.getElementById('submit-btn');
-const resetBtn = document.getElementById('reset-btn');
-const openModel = document.getElementById('myBtn');
-const randomBtn = document.getElementById('random-btn');
 
 const getRandomSpace = (event) => {
   const gameBoard = newBoard;
@@ -19,7 +14,7 @@ const getRandomSpace = (event) => {
   );
 
   if (cellFromDataId.isShot === true) {
-    alert('This spot on the enemy board has already been hit by you!.');
+    alert('This spot on the enemy board has already been hit by you!');
   } else {
     event.target.style.backgroundColor = 'red';
 
@@ -43,26 +38,12 @@ const getRandomSpace = (event) => {
   }
 };
 
-function determinePlacedShips() {
-  const placedShips = newBoard.player.gameBoard.filter(
-    (item) => item.isPlaced === true
-  );
-  if (placedShips.length === 0) {
-    resetBtn.style.visibility = 'hidden';
-    openModel.style.visibility = 'block';
-  } else {
-    resetBtn.style.visibility = 'block';
-    openModel.style.visibility = 'hidden';
-  }
-}
-// make the reset button fix these visibilities back, and then run the buildgameboard again
 const buildGameBoard = () => {
   const getMainContainer = document.getElementById('main-container'); // create player board
   const getEnemyContainer = document.getElementById('enemy-container');
 
   const playerBoard = newBoard.player.gameBoard;
 
-	
   getMainContainer.style.gridTemplateRows = `repeat(${
     playerBoard.length / 10
   }, 50px)`;
@@ -80,7 +61,7 @@ const buildGameBoard = () => {
       getMainContainer.appendChild(grids);
     }
   }
-  const enemyBoard = newBoard.enemy.gameBoard;
+  const enemyBoard = newBoard.enemy.gameBoard; // create enemy board
   getEnemyContainer.style.gridTemplateRows = `repeat(${
     enemyBoard.length / 10
   }, 50px)`;
@@ -95,9 +76,7 @@ const buildGameBoard = () => {
         enemyBoard[y * 10 + x].coordinate[1],
         enemyBoard[y * 10 + x].coordinate[0],
       ];
-      grids.addEventListener('click', (event) =>
-        getRandomSpace(event, newBoard)
-      );
+      grids.addEventListener('click', (event) => getRandomSpace(event));
       getEnemyContainer.appendChild(grids);
     }
   }
@@ -105,40 +84,52 @@ const buildGameBoard = () => {
 
 const placeChosenShips = () => {
   const getValuesFromInput = getValues();
-  newBoard.gameBoard.placeShip(
-    getValuesFromInput.convertedArray[0],
-    getValuesFromInput.carrierPosition,
-    5,
-    newBoard.player.gameBoard
-  );
-
-  newBoard.gameBoard.placeShip(
-    getValuesFromInput.convertedArray[1],
-    getValuesFromInput.battleShipPosition,
-    4,
-    newBoard.player.gameBoard
-  );
-
-  newBoard.gameBoard.placeShip(
-    getValuesFromInput.convertedArray[2],
-    getValuesFromInput.destroyerPosition,
-    3,
-    newBoard.player.gameBoard
-  );
-
-  newBoard.gameBoard.placeShip(
-    getValuesFromInput.convertedArray[3],
-    getValuesFromInput.submarinePosition,
-    3,
-    newBoard.player.gameBoard
-  );
-
-  newBoard.gameBoard.placeShip(
-    getValuesFromInput.convertedArray[4],
-    getValuesFromInput.frigatePosition,
-    2,
-    newBoard.player.gameBoard
-  );
+  if (
+    newBoard.gameBoard.placeShip(
+      getValuesFromInput.convertedArray[0],
+      getValuesFromInput.carrierPosition,
+      5,
+      newBoard.player.gameBoard
+    ).ship === undefined ||
+    newBoard.gameBoard.placeShip(
+      getValuesFromInput.convertedArray[1],
+      getValuesFromInput.battleShipPosition,
+      4,
+      newBoard.player.gameBoard
+    ).ship === undefined ||
+    newBoard.gameBoard.placeShip(
+      getValuesFromInput.convertedArray[2],
+      getValuesFromInput.destroyerPosition,
+      3,
+      newBoard.player.gameBoard
+    ).ship === undefined ||
+    newBoard.gameBoard.placeShip(
+      getValuesFromInput.convertedArray[3],
+      getValuesFromInput.submarinePosition,
+      3,
+      newBoard.player.gameBoard
+    ).ship === undefined ||
+    newBoard.gameBoard.placeShip(
+      getValuesFromInput.convertedArray[4],
+      getValuesFromInput.frigatePosition,
+      2,
+      newBoard.player.gameBoard
+    ).ship === undefined
+  ) {
+    alert('Ships overlap or go off the gameboard. Try again.');
+    const misPlacedShipsnewBoard = newBoard.player.gameBoard.filter(
+      (item) => item.isPlaced === true
+    );
+    console.log(misPlacedShipsnewBoard);
+    if (misPlacedShipsnewBoard.length > 0) {
+      misPlacedShipsnewBoard.forEach((element) => {
+        element.isPlaced = false;
+        element.ship = undefined;
+      });
+      console.log(misPlacedShipsnewBoard);
+    }
+    return;
+  }
 
   const items = newBoard.player.gameBoard.filter(
     (item) => item.isPlaced === true
@@ -154,11 +145,4 @@ const placeChosenShips = () => {
   console.log(newBoard);
 };
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  placeChosenShips();
-  form.reset();
-  determinePlacedShips();
-});
-
-export { buildGameBoard, determinePlacedShips };
+export { buildGameBoard, placeChosenShips };

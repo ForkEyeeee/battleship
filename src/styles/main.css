@@ -83,3 +83,7 @@ form#form-ship {
 	border: 1px solid rgba(0, 0, 0, 0.8);
 }
 
+.btn-container{
+	display: flex;
+	justify-content: center;
+}

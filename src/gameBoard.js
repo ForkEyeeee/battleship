@@ -6,6 +6,7 @@ function GameBoard() {
     return randomNumber;
   }
 
+	
   function generateGameBoard() {
     const board = [];
     for (let i = 0; i < 10; i += 1) {
