@@ -8,12 +8,21 @@
   </head>
   <body>
     <div id="flex-container">
-      <div id="main-container"></div>
-      <div id="enemy-container"></div>
+      <div class="title-grid-container">
+        <div class="player-title">Player</div>
+        <div id="main-container"></div>
+      </div>
+      <div id="win-title"></div>
+      <div class="title-grid-container">
+        <div class="player-title">CPU</div>
+        <div id="enemy-container"></div>
+      </div>
+
     </div>
+
     <!-- Trigger/Open The Modal -->
     <div class="btn-container">
-      <button id="myBtn">Open Modal</button>
+      <button id="myBtn">Create Ships</button>
       <button id="reset-btn">Reset</button>
     </div>
 
@@ -33,7 +42,6 @@
               placeholder="Enter coordinates x,y"
               pattern="^\(?\d+,\d+\)?$"
               title="Enter coordinates in the format x,y"
-              required
             />
             <div>
               <input
@@ -41,7 +49,6 @@
                 id="carrier-horizontal"
                 name="carrier-orientation"
                 value="horizontal"
-                required
               />
               <label for="carrier-horizontal">Horizontal</label>
               <input
@@ -63,7 +70,6 @@
               placeholder="Enter coordinates x,y"
               pattern="^\(?\d+,\d+\)?$"
               title="Enter coordinates in the format x,y"
-              required
             />
             <div>
               <input
@@ -71,7 +77,6 @@
                 id="battleship-horizontal"
                 name="battleship-orientation"
                 value="horizontal"
-                required
               />
               <label for="battleship-horizontal">Horizontal</label>
               <input
@@ -93,7 +98,6 @@
               placeholder="Enter coordinates x,y"
               pattern="^\(?\d+,\d+\)?$"
               title="Enter coordinates in the format x,y"
-              required
             />
             <div>
               <input
@@ -101,7 +105,6 @@
                 id="destroyer-horizontal"
                 name="destroyer-orientation"
                 value="horizontal"
-                required
               />
               <label for="destroyer-horizontal">Horizontal</label>
               <input
@@ -123,7 +126,6 @@
               placeholder="Enter coordinates x,y"
               pattern="^\(?\d+,\d+\)?$"
               title="Enter coordinates in the format x,y"
-              required
             />
             <div>
               <input
@@ -131,7 +133,6 @@
                 id="submarine-horizontal"
                 name="submarine-orientation"
                 value="horizontal"
-                required
               />
               <label for="submarine-horizontal">Horizontal</label>
               <input
@@ -153,7 +154,6 @@
               placeholder="Enter coordinates x,y"
               pattern="^\(?\d+,\d+\)?$"
               title="Enter coordinates in the format x,y"
-              required
             />
             <div>
               <input
@@ -161,7 +161,6 @@
                 id="frigate-horizontal"
                 name="frigate-orientation"
                 value="horizontal"
-                required
               />
               <label for="frigate-horizontal">Horizontal</label>
               <input
@@ -174,7 +173,8 @@
             </div>
           </div>
           <div class="btn-flex">
-            <button id="submit-btn">Submit</button>
+            <button id="submit-btn">Start Game</button>
+            <button id="random-btn">Randomize Ships</button>
           </div>
         </form>
       </div>

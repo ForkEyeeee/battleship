@@ -1,57 +1,238 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
 #flex-container {
-	display: flex;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
+  margin-left: 10%;
+  margin-top: 3%;
 }
 
-#main-container, #enemy-container{
-	display: grid;
-	width: 700px;
-	height: 700px;
-	margin: 2rem;
-	gap: 2px;
+#main-container,
+#enemy-container {
+  display: grid;
+  width: 700px;
+  height: 700px;
+  margin: 2rem auto;
+  gap: 2px;
+  padding-top: 10px;
 }
 
-div#ship-container {
-	display: flex;
-	justify-content: center;
-	border-style: solid;
-	height: 100px;
-	/* width: 50%; */
+.grid-item {
+  width: 50px;
+  height: 50px;
+  background-color: #ccc;
+  border: 1px solid #888;
 }
 
-.cell {
-	width: 50px;
-	height: 50px;
-	background-color: gray;
-	border-style: solid;
+.grid-item:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+#ship-container {
+  display: flex;
+  justify-content: center;
+  border-style: solid;
+  height: 100px;
 }
 
 .ship {
   display: flex;
 }
 
-/* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  display: none;
+  position: fixed;
+  z-index: 1;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: hidden; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.4);
 }
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 22% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ship-input-flex {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+form#form-ship {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+input[type='text'] {
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+input[type='radio'] {
+  margin-right: 5px;
+}
+
+.btn-container {
+	display: flex;
+	justify-content: center;
+	/* margin-top: 5px; */
+	margin-right: -91px;
+}
+
+.btn-container button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-container button:hover {
+  background-color: #45a049;
+}
+
+#win-title {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Additional Styles */
+
+#main-container {
+  background-color: transparent;
+}
+
+.title-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ... previous styles ... */
+
+.player-title,
+.cpu-title {
+  margin-right: 150px;
+  color: #800080; /* Update the color here */
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* ... previous styles ... */
+
+.modal-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.ship-input-flex {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+input[type='text'] {
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 200px;
+}
+
+.btn-flex {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#myBtn,
+#reset-btn,
+#submit-btn,
+#random-btn {
+  padding: 10px 20px;
+  margin-right: 10px;
+  font-size: 16px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+#myBtn:hover,
+#reset-btn:hover,
+#submit-btn:hover,
+#random-btn:hover {
+  background-color: #d32f2f;
+}
+
+#myBtn {
+  background-color: #008cba;
+}
+#myBtn:hover {
+  background-color: #00608f;
+}
+#reset-btn {
+  background-color: #f44336;
+}
+
+/* ... previous styles ... */
 
 /* Modal Content/Box */
 .modal-content {
-	background-color: #fefefe;
-	margin: 22% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 80%;
-	height: 10%;
+  background-color: #fefefe;
+  margin: 22% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  animation-name: fade;
+  animation-duration: 0.5s;
 }
 
 /* The Close Button */
@@ -70,20 +251,119 @@ div#ship-container {
 }
 
 .ship-input-flex {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 form#form-ship {
-	display: flex;
-	justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
-.grid-item {
-	border: 1px solid rgba(0, 0, 0, 0.8);
+label {
+  margin-bottom: 5px;
 }
 
-.btn-container{
-	display: flex;
-	justify-content: center;
+input[type='text'] {
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+input[type='radio'] {
+  margin-right: 5px;
+}
+
+.btn-flex {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+button#submit-btn,
+button#random-btn {
+  padding: 10px 20px;
+  margin-right: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button#submit-btn:hover,
+button#random-btn:hover {
+  background-color: #45a049;
+}
+
+/* Additional Styles */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.4);
+  animation-name: fade;
+  animation-duration: 0.5s;
+}
+
+.ship-input-flex {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+input[type='text'] {
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 200px;
+}
+
+.btn-flex {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+button#submit-btn,
+button#random-btn {
+  padding: 10px 20px;
+  margin-right: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button#submit-btn:hover,
+button#random-btn:hover {
+  background-color: #45a049;
+}
+
+/* Fixed Grid Positioning */
+
+#flex-container {
+  display: flex;
+  justify-content: center;
+}
+
+#main-container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

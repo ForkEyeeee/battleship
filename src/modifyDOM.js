@@ -1,16 +1,33 @@
 import Player from './player';
 import getValues from './getUserInput';
 
-const newBoard = new Player('jeff');
-
+let newBoard = new Player('Player');
+const randomBtn = document.getElementById('random-btn');
+const form = document.getElementById('form-ship');
+const modal = document.getElementById('myModal');
+const createShipsBtn = document.getElementById('myBtn');
+const getMainContainer = document.getElementById('main-container'); // create player board
+const getEnemyContainer = document.getElementById('enemy-container');
+const resetBtn = document.getElementById('reset-btn');
+const submitBtn = document.getElementById('submit-btn');
+const winContainer = document.getElementById('win-title')
 const getRandomSpace = (event) => {
   if (
-    newBoard.gameBoard.isAllShipsSunk(newBoard,
+    newBoard.player.gameBoard.filter((item) => item.ship !== undefined).length >
+    0
+  ) {
+  } else {
+    return;
+  }
+  if (
+    newBoard.gameBoard.isAllShipsSunk(
+      newBoard,
       newBoard.enemy.gameBoard,
-      newBoard.player.gameBoard 
+      newBoard.player.gameBoard
     ) === true
   ) {
-    alert(`${newBoard.currentPlayer} wins`);
+		winContainer.innerHTML = `${newBoard.currentPlayer} wins`
+    return;
   }
   const gameBoard = newBoard;
   const getClickedCell = event.target.dataset.id;
@@ -23,6 +40,7 @@ const getRandomSpace = (event) => {
   if (cellFromDataId.isPlaced === true) {
     event.target.style.backgroundColor = 'gray';
     cellFromDataId.ship.hit();
+    // cellFromDataId.isShot = true;
   }
   if (cellFromDataId.isShot === true) {
     alert('This spot on the enemy board has already been hit by you!');
@@ -53,9 +71,45 @@ const getRandomSpace = (event) => {
 };
 
 const buildGameBoard = () => {
-  const getMainContainer = document.getElementById('main-container'); // create player board
-  const getEnemyContainer = document.getElementById('enemy-container');
+  submitBtn.onclick = function (event) {
+    if (form.checkValidity()) {
+      placeChosenShips(event);
+      if (
+        newBoard.enemy.gameBoard.filter((item) => item.ship !== undefined) ||
+        newBoard.player.gameBoard.filter((item) => item.ship !== undefined)
+      ) {
+        createShipsBtn.disabled = true;
+      }
+      event.preventDefault();
+      form.reset();
+      modal.style.display = 'none';
+    }
+  };
+  createShipsBtn.onclick = function (event) {};
+  randomBtn.onclick = function (event) {
+    if (form.checkValidity()) {
+      newBoard.gameBoard.placeRandomShips(newBoard.player.gameBoard);
+      placeChosenShips(event);
+      if (
+        newBoard.enemy.gameBoard.filter((item) => item.ship !== undefined) ||
+        newBoard.player.gameBoard.filter((item) => item.ship !== undefined)
+      ) {
+        createShipsBtn.disabled = true;
+      }
+      event.preventDefault();
+      form.reset();
+      modal.style.display = 'none';
+    }
+  };
 
+  resetBtn.onclick = function (event) {
+    newBoard = new Player();
+    const gridCells = document.getElementsByClassName('grid-item');
+    Array.from(gridCells).forEach((element) => {
+      element.style.backgroundColor = '#ccc';
+    });
+    createShipsBtn.disabled = false;
+  };
   const playerBoard = newBoard.player.gameBoard;
   newBoard.gameBoard.placeRandomShips(newBoard.enemy.gameBoard); // build enemy ships
 
@@ -97,67 +151,81 @@ const buildGameBoard = () => {
   }
 };
 
-const placeChosenShips = () => {
-  const getValuesFromInput = getValues();
-  if (
-    newBoard.gameBoard.placeShip(
-      getValuesFromInput.convertedArray[0],
-      getValuesFromInput.carrierPosition,
-      5,
-      newBoard.player.gameBoard
-    ).ship === undefined ||
-    newBoard.gameBoard.placeShip(
-      getValuesFromInput.convertedArray[1],
-      getValuesFromInput.battleShipPosition,
-      4,
-      newBoard.player.gameBoard
-    ).ship === undefined ||
-    newBoard.gameBoard.placeShip(
-      getValuesFromInput.convertedArray[2],
-      getValuesFromInput.destroyerPosition,
-      3,
-      newBoard.player.gameBoard
-    ).ship === undefined ||
-    newBoard.gameBoard.placeShip(
-      getValuesFromInput.convertedArray[3],
-      getValuesFromInput.submarinePosition,
-      3,
-      newBoard.player.gameBoard
-    ).ship === undefined ||
-    newBoard.gameBoard.placeShip(
-      getValuesFromInput.convertedArray[4],
-      getValuesFromInput.frigatePosition,
-      2,
-      newBoard.player.gameBoard
-    ).ship === undefined
-  ) {
-    alert('Ships overlap or go off the gameboard. Try again.');
-    const misPlacedShipsnewBoard = newBoard.player.gameBoard.filter(
+const placeChosenShips = (event) => {
+  if (event.target !== randomBtn) {
+    const getValuesFromInput = getValues();
+    if (
+      newBoard.gameBoard.placeShip(
+        getValuesFromInput.convertedArray[0],
+        getValuesFromInput.carrierPosition,
+        5,
+        newBoard.player.gameBoard
+      ).ship === undefined ||
+      newBoard.gameBoard.placeShip(
+        getValuesFromInput.convertedArray[1],
+        getValuesFromInput.battleShipPosition,
+        4,
+        newBoard.player.gameBoard
+      ).ship === undefined ||
+      newBoard.gameBoard.placeShip(
+        getValuesFromInput.convertedArray[2],
+        getValuesFromInput.destroyerPosition,
+        3,
+        newBoard.player.gameBoard
+      ).ship === undefined ||
+      newBoard.gameBoard.placeShip(
+        getValuesFromInput.convertedArray[3],
+        getValuesFromInput.submarinePosition,
+        3,
+        newBoard.player.gameBoard
+      ).ship === undefined ||
+      newBoard.gameBoard.placeShip(
+        getValuesFromInput.convertedArray[4],
+        getValuesFromInput.frigatePosition,
+        2,
+        newBoard.player.gameBoard
+      ).ship === undefined
+    ) {
+      alert('Ships overlap or go off the gameboard. Try again.');
+      const misPlacedShipsnewBoard = newBoard.player.gameBoard.filter(
+        (item) => item.isPlaced === true
+      );
+      console.log(misPlacedShipsnewBoard);
+      if (misPlacedShipsnewBoard.length > 0) {
+        misPlacedShipsnewBoard.forEach((element) => {
+          element.isPlaced = false;
+          element.ship = undefined;
+        });
+        console.log(misPlacedShipsnewBoard);
+      }
+      return;
+    }
+
+    const items = newBoard.player.gameBoard.filter(
       (item) => item.isPlaced === true
     );
-    console.log(misPlacedShipsnewBoard);
-    if (misPlacedShipsnewBoard.length > 0) {
-      misPlacedShipsnewBoard.forEach((element) => {
-        element.isPlaced = false;
-        element.ship = undefined;
-      });
-      console.log(misPlacedShipsnewBoard);
-    }
-    return;
+
+    items.forEach((item) => {
+      const coordString = item.coordinate.join(',');
+      const cellElement = document.querySelector(`[data-id="${coordString}"]`);
+      if (cellElement) {
+        cellElement.style.backgroundColor = 'gray';
+      }
+    });
+    console.log(newBoard);
+  } else {
+    const items = newBoard.player.gameBoard.filter(
+      (item) => item.isPlaced === true
+    );
+
+    items.forEach((item) => {
+      const coordString = item.coordinate.join(',');
+      const cellElement = document.querySelector(`[data-id="${coordString}"]`);
+      if (cellElement) {
+        cellElement.style.backgroundColor = 'gray';
+      }
+    });
   }
-
-  const items = newBoard.player.gameBoard.filter(
-    (item) => item.isPlaced === true
-  );
-
-  items.forEach((item) => {
-    const coordString = item.coordinate.join(',');
-    const cellElement = document.querySelector(`[data-id="${coordString}"]`);
-    if (cellElement) {
-      cellElement.style.backgroundColor = 'gray';
-    }
-  });
-  console.log(newBoard);
 };
 
 export { buildGameBoard, placeChosenShips };

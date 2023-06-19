@@ -21,18 +21,20 @@ const modalWindow = () => {
     modal.style.display = 'none';
   };
 
-  submitBtn.onclick = function () {
-    modal.style.display = 'none';
-  };
+  // submitBtn.onclick = function () {
+  //   modal.style.display = 'none';
+  // };
 
-  submitBtn.onclick = function (e) {
-    if (form.checkValidity()) {
-      e.preventDefault();
-      placeChosenShips();
-      form.reset();
-      modal.style.display = 'none';
-    }
-  };
+  // // submitBtn.onclick = function (e) {
+  // //   if (form.checkValidity()) {
+  // //     e.preventDefault();
+  // //     placeChosenShips(e);
+  // //     form.reset();
+  // //     modal.style.display = 'none';
+  // //   }
+  // // };
+
+
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function (event) {
