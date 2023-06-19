@@ -2,12 +2,11 @@ import './styles/main.css';
 import GameBoard from './gameBoard';
 import Ship from './ship';
 import Player from './player';
-import { generatePlayerShips, buildGameBoard } from './modifyDOM';
-// const test = new Player('jeff');
+import modalWindow from './modalWindow';
+import { buildGameBoard, determinePlacedShips } from './modifyDOM';
 
-document.addEventListener("DOMContentLoaded", function() {
-  buildGameBoard();
-});
+buildGameBoard()
+modalWindow()
 
 
-generatePlayerShips();
+

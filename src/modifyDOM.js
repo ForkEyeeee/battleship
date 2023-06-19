@@ -1,7 +1,14 @@
 import Player from './player';
-import Ship from './ship';
+import getValues from './getUserInput';
 
-const getRandomSpace = (event, newBoard) => {
+const newBoard = new Player('jeff');
+const form = document.getElementById('form-ship');
+const submitBtn = document.getElementById('submit-btn');
+const resetBtn = document.getElementById('reset-btn');
+const openModel = document.getElementById('myBtn');
+const randomBtn = document.getElementById('random-btn');
+
+const getRandomSpace = (event) => {
   const gameBoard = newBoard;
   const getClickedCell = event.target.dataset.id;
   const str = getClickedCell;
@@ -36,47 +43,26 @@ const getRandomSpace = (event, newBoard) => {
   }
 };
 
-const getCoordinates = (shipLength) => {
-  let coordinates = prompt(
-    `Enter the starting coordinate (x, y) for your ship of length ${shipLength}:`
+function determinePlacedShips() {
+  const placedShips = newBoard.player.gameBoard.filter(
+    (item) => item.isPlaced === true
   );
-  coordinates = coordinates.split(',').map(Number);
-
-  while (coordinates.length !== 2 || coordinates.some(isNaN)) {
-    alert("Invalid coordinates. Please enter a coordinate pair, e.g., '4, 5'.");
-    coordinates = prompt(
-      `Enter the starting coordinate (x, y) for your ship of length ${shipLength}:`
-    );
-    coordinates = coordinates.split(',').map(Number);
+  if (placedShips.length === 0) {
+    resetBtn.style.visibility = 'hidden';
+    openModel.style.visibility = 'block';
+  } else {
+    resetBtn.style.visibility = 'block';
+    openModel.style.visibility = 'hidden';
   }
-
-  return coordinates;
-};
-
-const getDirection = () => {
-  let direction = prompt("Enter ship direction ('horizontal' or 'vertical'):");
-  direction = direction.toLowerCase();
-
-  while (direction !== 'horizontal' && direction !== 'vertical') {
-    alert("Invalid direction. Please enter either 'horizontal' or 'vertical'.");
-    direction = prompt("Enter ship direction ('horizontal' or 'vertical'):");
-    direction = direction.toLowerCase();
-  }
-  return direction;
-};
-
-// Using the function
-// const coordinates = getCoordinates();
-// console.log(coordinates);
-
-const generatePlayerShips = () => {};
-const buildGameBoard = (player = 'jeff') => {
-  const newBoard = new Player(player);
-
+}
+// make the reset button fix these visibilities back, and then run the buildgameboard again
+const buildGameBoard = () => {
   const getMainContainer = document.getElementById('main-container'); // create player board
   const getEnemyContainer = document.getElementById('enemy-container');
 
   const playerBoard = newBoard.player.gameBoard;
+
+	
   getMainContainer.style.gridTemplateRows = `repeat(${
     playerBoard.length / 10
   }, 50px)`;
@@ -91,7 +77,6 @@ const buildGameBoard = (player = 'jeff') => {
         playerBoard[y * 10 + x].coordinate[1],
         playerBoard[y * 10 + x].coordinate[0],
       ];
-
       getMainContainer.appendChild(grids);
     }
   }
@@ -116,66 +101,64 @@ const buildGameBoard = (player = 'jeff') => {
       getEnemyContainer.appendChild(grids);
     }
   }
-  const carrierShip = new Ship(5);
-  const battleShip = new Ship(4);
-  const destroyerShip = new Ship(3);
-  const submarineShip = new Ship(3);
-  const frigateShip = new Ship(2);
-  const getCarrierCoords = 0;
-  setTimeout(() => {
-    newBoard.gameBoard.placeShip(
-      [3, 3],
-      'vertical',
-      5,
-      newBoard.player.gameBoard
-    );
+};
 
-    newBoard.gameBoard.placeShip(
-      [3, 1],
-      'vertical',
-      4,
-      newBoard.player.gameBoard
-    );
+const placeChosenShips = () => {
+  const getValuesFromInput = getValues();
+  newBoard.gameBoard.placeShip(
+    getValuesFromInput.convertedArray[0],
+    getValuesFromInput.carrierPosition,
+    5,
+    newBoard.player.gameBoard
+  );
 
-    newBoard.gameBoard.placeShip(
-      [6, 6],
-      'vertical',
-      3,
-      newBoard.player.gameBoard
-    );
+  newBoard.gameBoard.placeShip(
+    getValuesFromInput.convertedArray[1],
+    getValuesFromInput.battleShipPosition,
+    4,
+    newBoard.player.gameBoard
+  );
 
-    newBoard.gameBoard.placeShip(
-      [8, 4],
-      'vertical',
-      3,
-      newBoard.player.gameBoard
-    );
+  newBoard.gameBoard.placeShip(
+    getValuesFromInput.convertedArray[2],
+    getValuesFromInput.destroyerPosition,
+    3,
+    newBoard.player.gameBoard
+  );
 
-    newBoard.gameBoard.placeShip(
-      [9, 7],
-      'vertical',
-      2,
-      newBoard.player.gameBoard
-    );
+  newBoard.gameBoard.placeShip(
+    getValuesFromInput.convertedArray[3],
+    getValuesFromInput.submarinePosition,
+    3,
+    newBoard.player.gameBoard
+  );
 
-    const items = newBoard.player.gameBoard.filter(
-      (item) => item.isPlaced === true
-    );
+  newBoard.gameBoard.placeShip(
+    getValuesFromInput.convertedArray[4],
+    getValuesFromInput.frigatePosition,
+    2,
+    newBoard.player.gameBoard
+  );
 
-    items.forEach((item) => {
-      // Convert the coordinates to a string format that matches the data-id attribute
-      const coordString = item.coordinate.join(',');
+  const items = newBoard.player.gameBoard.filter(
+    (item) => item.isPlaced === true
+  );
 
-      // Get the grid cell with this data-id
-      const cellElement = document.querySelector(`[data-id="${coordString}"]`);
-
-      // Now you can manipulate the cell element
-      if (cellElement) {
-        cellElement.style.backgroundColor = 'gray';
-      }
-    });
-  }, 0);
-
+  items.forEach((item) => {
+    const coordString = item.coordinate.join(',');
+    const cellElement = document.querySelector(`[data-id="${coordString}"]`);
+    if (cellElement) {
+      cellElement.style.backgroundColor = 'gray';
+    }
+  });
   console.log(newBoard);
 };
-export { generatePlayerShips, buildGameBoard };
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  placeChosenShips();
+  form.reset();
+  determinePlacedShips();
+});
+
+export { buildGameBoard, determinePlacedShips };
