@@ -6,7 +6,6 @@ function GameBoard() {
     return randomNumber;
   }
 
-	
   function generateGameBoard() {
     const board = [];
     for (let i = 0; i < 10; i += 1) {
@@ -21,8 +20,6 @@ function GameBoard() {
     }
     return board;
   }
-
-  // let currentTurn = 'Player';
 
   function placeShip(startCoordinate, axis, length, board) {
     // pass board to place ship on
@@ -60,14 +57,14 @@ function GameBoard() {
       }
     } else if (axis === 'horizontal') {
       for (let i = 1; i < length; i += 1) {
-        const adjacentcell = items.filter(
+        const adjacentcell = items.find(
           (item) =>
             JSON.stringify(item.coordinate) ===
             JSON.stringify([
-              startCell.coordinate[1] + i,
-              startCell.coordinate[0],
+              startCell.coordinate[0] + i,
+              startCell.coordinate[1],
             ])
-        )[0];
+        );
 
         if (adjacentcell.isPlaced === true) {
           return 'ship is here already, cannot place ship';
@@ -89,9 +86,60 @@ function GameBoard() {
     };
   }
 
-  function isAllShipsSunk(board) {
-    const ships = board.filter((item) => item.ship !== undefined);
-    return ships.every((ship) => ship.ship.sink === true);
+  function placeRandomShips(enemyBoard) {
+    const ships = [
+      { name: 'Carrier', length: 5 },
+      { name: 'Battleship', length: 4 },
+      { name: 'Destroyer', length: 3 },
+      { name: 'Submarine', length: 3 },
+      { name: 'Frigate', length: 2 },
+    ];
+    for (let i = 4; i >= 0; i--) {
+      let shipPlaced = false;
+      while (!shipPlaced) {
+        const randomCoordinate =
+          enemyBoard[generateRandomCoordinate()].coordinate;
+        const randomAxis =
+          generateRandomCoordinate() % 2 === 0 ? 'vertical' : 'horizontal';
+
+        console.log(
+          `Trying to place: ${ships[i].name} with length: ${ships[i].length}`
+        ); // logging the ship name and length
+        console.log(
+          `Generated coordinate and axis: ${randomCoordinate}, ${randomAxis}`
+        ); // logging the generated coordinate and axis
+
+        const result = placeShip(
+          randomCoordinate,
+          randomAxis,
+          ships[i].length,
+          enemyBoard
+        );
+
+        console.log(`Result of placeShip: ${result}`); // logging the result of placeShip function
+
+        // If placeShip returns an object (indicating success), break out of the loop
+        if (typeof result === 'object') {
+          console.log(`Successfully placed: ${ships[i].name}`); // logging if the ship was successfully placed
+          shipPlaced = true;
+        }
+        // If placeShip returns a string (indicating an error), the loop will continue, generating new coordinates and trying again
+      }
+    }
+  }
+
+  function isAllShipsSunk(board, enemyBoard, playerBoard) {
+    const enemyShips = enemyBoard.filter((item) => item.ship !== undefined);
+    const playerShips = playerBoard.filter((item) => item.ship !== undefined);
+    if (enemyShips.every((ship) => ship.ship.sink === true)) {
+      board.currentPlayer = board.player.name;
+      return true;
+    }
+    if (playerShips.every((ship) => ship.ship.sink === true)) {
+      board.currentPlayer = board.enemy.name;
+      return true;
+    }
+    return false;
   }
 
   function receiveAttackFromCPU(gameBoard) {
@@ -175,6 +223,7 @@ function GameBoard() {
   return {
     generateGameBoard,
     placeShip,
+    placeRandomShips,
     receiveAttack,
     receiveAttackFromCPU,
     isAllShipsSunk,

@@ -4,6 +4,14 @@ import getValues from './getUserInput';
 const newBoard = new Player('jeff');
 
 const getRandomSpace = (event) => {
+  if (
+    newBoard.gameBoard.isAllShipsSunk(newBoard,
+      newBoard.enemy.gameBoard,
+      newBoard.player.gameBoard 
+    ) === true
+  ) {
+    alert(`${newBoard.currentPlayer} wins`);
+  }
   const gameBoard = newBoard;
   const getClickedCell = event.target.dataset.id;
   const str = getClickedCell;
@@ -12,10 +20,16 @@ const getRandomSpace = (event) => {
   const cellFromDataId = gameBoard.enemy.gameBoard.find(
     (item) => JSON.stringify(item.coordinate) === JSON.stringify(arr)
   );
-
+  if (cellFromDataId.isPlaced === true) {
+    event.target.style.backgroundColor = 'gray';
+    cellFromDataId.ship.hit();
+  }
   if (cellFromDataId.isShot === true) {
     alert('This spot on the enemy board has already been hit by you!');
-  } else {
+  } else if (
+    cellFromDataId.isShot === false &&
+    cellFromDataId.isPlaced !== true
+  ) {
     event.target.style.backgroundColor = 'red';
 
     gameBoard.gameBoard.receiveAttack(
@@ -43,6 +57,7 @@ const buildGameBoard = () => {
   const getEnemyContainer = document.getElementById('enemy-container');
 
   const playerBoard = newBoard.player.gameBoard;
+  newBoard.gameBoard.placeRandomShips(newBoard.enemy.gameBoard); // build enemy ships
 
   getMainContainer.style.gridTemplateRows = `repeat(${
     playerBoard.length / 10
