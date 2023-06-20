@@ -15,7 +15,7 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #F5F5FE;
+  background-color: #f5f5fe;
 }
 
 #flex-container {
@@ -44,7 +44,7 @@ body {
 
 .grid-item:hover {
   background-color: #ddd;
-  cursor: pointer;
+  cursor: crosshair;
 }
 
 #ship-container {
