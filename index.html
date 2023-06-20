@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battleship</title>
+  <script defer src="bundle49cca1829ec6920edd20.js"></script></head>
+  <body>
+    <div id="flex-container">
+      <div class="title-grid-container">
+        <div class="player-title">Player</div>
+        <div id="main-container"></div>
+      </div>
+      <div id="win-title"></div>
+      <div class="title-grid-container">
+        <div class="player-title">CPU</div>
+        <div id="enemy-container"></div>
+      </div>
+    </div>
+    <div class="btn-container">
+      <button id="myBtn">Create Ships</button>
+      <button id="reset-btn">Reset</button>
+    </div>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form action="" method="get" class="modal-flex" id="form-ship">
+          <div class="ship-input-flex">
+            <label for="carrier-input">Carrier(5)</label>
+            <input
+              type="text"
+              name="carrier-ship"
+              id="carrier-input"
+              maxlength="7"
+              placeholder="Enter coordinates x,y"
+              pattern="^\(?\d+,\d+\)?$"
+              title="Enter coordinates in the format x,y"
+            />
+            <div>
+              <input
+                type="radio"
+                id="carrier-horizontal"
+                name="carrier-orientation"
+                value="horizontal"
+              />
+              <label for="carrier-horizontal">Horizontal</label>
+              <input
+                type="radio"
+                id="carrier-vertical"
+                name="carrier-orientation"
+                value="vertical"
+              />
+              <label for="carrier-vertical">Vertical</label>
+            </div>
+          </div>
+          <div class="ship-input-flex">
+            <label for="battleship-input">BattleShip(4)</label>
+            <input
+              type="text"
+              name="battleship"
+              id="battleship-input"
+              maxlength="7"
+              placeholder="Enter coordinates x,y"
+              pattern="^\(?\d+,\d+\)?$"
+              title="Enter coordinates in the format x,y"
+            />
+            <div>
+              <input
+                type="radio"
+                id="battleship-horizontal"
+                name="battleship-orientation"
+                value="horizontal"
+              />
+              <label for="battleship-horizontal">Horizontal</label>
+              <input
+                type="radio"
+                id="battleship-vertical"
+                name="battleship-orientation"
+                value="vertical"
+              />
+              <label for="battleship-vertical">Vertical</label>
+            </div>
+          </div>
+          <div class="ship-input-flex">
+            <label for="destroyer-input">Destroyer(3)</label>
+            <input
+              type="text"
+              name="destroyer"
+              id="destroyer-input"
+              maxlength="7"
+              placeholder="Enter coordinates x,y"
+              pattern="^\(?\d+,\d+\)?$"
+              title="Enter coordinates in the format x,y"
+            />
+            <div>
+              <input
+                type="radio"
+                id="destroyer-horizontal"
+                name="destroyer-orientation"
+                value="horizontal"
+              />
+              <label for="destroyer-horizontal">Horizontal</label>
+              <input
+                type="radio"
+                id="destroyer-vertical"
+                name="destroyer-orientation"
+                value="vertical"
+              />
+              <label for="destroyer-vertical">Vertical</label>
+            </div>
+          </div>
+          <div class="ship-input-flex">
+            <label for="submarine-input">Submarine(3)</label>
+            <input
+              type="text"
+              name="submarine"
+              id="submarine-input"
+              maxlength="7"
+              placeholder="Enter coordinates x,y"
+              pattern="^\(?\d+,\d+\)?$"
+              title="Enter coordinates in the format x,y"
+            />
+            <div>
+              <input
+                type="radio"
+                id="submarine-horizontal"
+                name="submarine-orientation"
+                value="horizontal"
+              />
+              <label for="submarine-horizontal">Horizontal</label>
+              <input
+                type="radio"
+                id="submarine-vertical"
+                name="submarine-orientation"
+                value="vertical"
+              />
+              <label for="submarine-vertical">Vertical</label>
+            </div>
+          </div>
+          <div class="ship-input-flex">
+            <label for="frigate-input">Frigate(2)</label>
+            <input
+              type="text"
+              name="frigate"
+              id="frigate-input"
+              maxlength="7"
+              placeholder="Enter coordinates x,y"
+              pattern="^\(?\d+,\d+\)?$"
+              title="Enter coordinates in the format x,y"
+            />
+            <div>
+              <input
+                type="radio"
+                id="frigate-horizontal"
+                name="frigate-orientation"
+                value="horizontal"
+              />
+              <label for="frigate-horizontal">Horizontal</label>
+              <input
+                type="radio"
+                id="frigate-vertical"
+                name="frigate-orientation"
+                value="vertical"
+              />
+              <label for="frigate-vertical">Vertical</label>
+            </div>
+          </div>
+          <div class="btn-flex">
+            <button id="submit-btn">Start Game</button>
+            <button id="random-btn">Randomize Ships</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
