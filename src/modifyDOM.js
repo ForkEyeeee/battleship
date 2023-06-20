@@ -18,7 +18,7 @@ const getRandomSpace = (event) => {
   }
 
   if (winContainer.innerHTML !== '') {
-    return; // Game already won, exit the function
+    return;
   }
 
   const gameBoard = newBoard;
