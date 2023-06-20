@@ -13,19 +13,12 @@ const submitBtn = document.getElementById('submit-btn');
 const winContainer = document.getElementById('win-title');
 
 const getRandomSpace = (event) => {
-  setTimeout(() => {
-    if (
-      newBoard.gameBoard.isAllShipsSunk(
-        newBoard,
-        newBoard.enemy.gameBoard,
-        newBoard.player.gameBoard
-      )
-    ) {
-      winContainer.innerHTML = `${newBoard.currentPlayer} wins`;
-    }
-  }, 0);
   if (!newBoard.player.gameBoard.some((item) => item.ship !== undefined)) {
     return;
+  }
+
+  if (winContainer.innerHTML !== '') {
+    return; // Game already won, exit the function
   }
 
   const gameBoard = newBoard;
@@ -40,11 +33,7 @@ const getRandomSpace = (event) => {
     event.target.style.backgroundColor = 'gray';
     cellFromDataId.ship.hit();
   }
-  if (cellFromDataId.isShot === true) {
-  } else if (
-    cellFromDataId.isShot === false &&
-    cellFromDataId.isPlaced !== true
-  ) {
+  if (cellFromDataId.isShot === false && cellFromDataId.isPlaced !== true) {
     event.target.style.backgroundColor = 'red';
     gameBoard.gameBoard.receiveAttack(
       arr,
@@ -62,7 +51,22 @@ const getRandomSpace = (event) => {
     const element = document.querySelector(`[data-id="${coordinateString}"]`);
     element.style.backgroundColor = 'blue';
   }
+
+  checkGameStatus();
 };
+
+const checkGameStatus = () => {
+  if (
+    newBoard.gameBoard.isAllShipsSunk(
+      newBoard,
+      newBoard.enemy.gameBoard,
+      newBoard.player.gameBoard
+    )
+  ) {
+    winContainer.innerHTML = `${newBoard.currentPlayer} wins`;
+  }
+};
+
 const placeChosenShips = (event) => {
   if (event.target !== randomBtn) {
     const getValuesFromInput = getValues();
@@ -99,11 +103,11 @@ const placeChosenShips = (event) => {
       ).ship === undefined
     ) {
       alert('Invalid ship placement. Try again.');
-      const misPlacedShipsnewBoard = newBoard.player.gameBoard.some(
+      const misPlacedShips = newBoard.player.gameBoard.filter(
         (item) => item.isPlaced === true
       );
-      if (misPlacedShipsnewBoard) {
-        misPlacedShipsnewBoard.forEach((ship) => {
+      if (misPlacedShips.length > 0) {
+        misPlacedShips.forEach((ship) => {
           ship.isPlaced = false;
           ship.ship = undefined;
         });

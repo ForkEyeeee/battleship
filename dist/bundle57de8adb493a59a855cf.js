@@ -301,16 +301,15 @@ var resetBtn = document.getElementById('reset-btn');
 var submitBtn = document.getElementById('submit-btn');
 var winContainer = document.getElementById('win-title');
 var getRandomSpace = function getRandomSpace(event) {
-  setTimeout(function () {
-    if (newBoard.gameBoard.isAllShipsSunk(newBoard, newBoard.enemy.gameBoard, newBoard.player.gameBoard)) {
-      winContainer.innerHTML = "".concat(newBoard.currentPlayer, " wins");
-    }
-  }, 0);
   if (!newBoard.player.gameBoard.some(function (item) {
     return item.ship !== undefined;
   })) {
     return;
   }
+  if (winContainer.innerHTML !== '') {
+    return; // Game already won, exit the function
+  }
+
   var gameBoard = newBoard;
   var getClickedCell = event.target.dataset.id;
   var str = getClickedCell;
@@ -322,7 +321,7 @@ var getRandomSpace = function getRandomSpace(event) {
     event.target.style.backgroundColor = 'gray';
     cellFromDataId.ship.hit();
   }
-  if (cellFromDataId.isShot === true) {} else if (cellFromDataId.isShot === false && cellFromDataId.isPlaced !== true) {
+  if (cellFromDataId.isShot === false && cellFromDataId.isPlaced !== true) {
     event.target.style.backgroundColor = 'red';
     gameBoard.gameBoard.receiveAttack(arr, gameBoard.enemy.gameBoard, gameBoard);
     var coordinate = gameBoard.gameBoard.receiveAttackFromCPU(gameBoard).randomSpace.coordinate;
@@ -330,17 +329,23 @@ var getRandomSpace = function getRandomSpace(event) {
     var element = document.querySelector("[data-id=\"".concat(coordinateString, "\"]"));
     element.style.backgroundColor = 'blue';
   }
+  checkGameStatus();
+};
+var checkGameStatus = function checkGameStatus() {
+  if (newBoard.gameBoard.isAllShipsSunk(newBoard, newBoard.enemy.gameBoard, newBoard.player.gameBoard)) {
+    winContainer.innerHTML = "".concat(newBoard.currentPlayer, " wins");
+  }
 };
 var placeChosenShips = function placeChosenShips(event) {
   if (event.target !== randomBtn) {
     var getValuesFromInput = (0,_getUserInput__WEBPACK_IMPORTED_MODULE_1__["default"])();
     if (newBoard.gameBoard.placeShip(getValuesFromInput.convertedArray[0], getValuesFromInput.carrierPosition, 5, newBoard.player.gameBoard).ship === undefined || newBoard.gameBoard.placeShip(getValuesFromInput.convertedArray[1], getValuesFromInput.battleShipPosition, 4, newBoard.player.gameBoard).ship === undefined || newBoard.gameBoard.placeShip(getValuesFromInput.convertedArray[2], getValuesFromInput.destroyerPosition, 3, newBoard.player.gameBoard).ship === undefined || newBoard.gameBoard.placeShip(getValuesFromInput.convertedArray[3], getValuesFromInput.submarinePosition, 3, newBoard.player.gameBoard).ship === undefined || newBoard.gameBoard.placeShip(getValuesFromInput.convertedArray[4], getValuesFromInput.frigatePosition, 2, newBoard.player.gameBoard).ship === undefined) {
       alert('Invalid ship placement. Try again.');
-      var misPlacedShipsnewBoard = newBoard.player.gameBoard.some(function (item) {
+      var misPlacedShips = newBoard.player.gameBoard.filter(function (item) {
         return item.isPlaced === true;
       });
-      if (misPlacedShipsnewBoard) {
-        misPlacedShipsnewBoard.forEach(function (ship) {
+      if (misPlacedShips.length > 0) {
+        misPlacedShips.forEach(function (ship) {
           ship.isPlaced = false;
           ship.ship = undefined;
         });
@@ -1414,4 +1419,4 @@ __webpack_require__.r(__webpack_exports__);
 
 /******/ })()
 ;
-//# sourceMappingURL=bundle15dc21760506edce6bd4.js.map
+//# sourceMappingURL=bundle57de8adb493a59a855cf.js.map
