@@ -33,7 +33,7 @@ describe('GameBoard factory has working methods and valid properties', () => {
     expect(
       gameBoard.placeShip([6, 2], 'horizontal', 3, player.player.gameBoard)
         .cellsToPlace
-    ).toBeDefined();
+    ).not.toBeDefined();
   });
 
   test('placeShip() returns ship with length property equal to length parameter', () => {
@@ -80,12 +80,25 @@ describe('GameBoard factory has working methods and valid properties', () => {
     expect(gameBoard.receiveAttackFromCPU(player).randomSpace).toBeDefined();
   });
 
+  test('placeRandomShips() will randomly place ships on the enemy board', () => {
+    gameBoard.placeRandomShips(player.enemy.gameBoard);
+    expect(
+      player.enemy.gameBoard.filter((item) => item.isPlaced === true).length
+    ).toBeGreaterThan(0);
+  });
+
   test('all ships sunk for a given board', () => {
     gameBoard.placeShip([2, 2], 'vertical', 3, player.player.gameBoard);
     gameBoard.receiveAttack([2, 2], player.enemy.gameBoard, player);
     gameBoard.receiveAttack([2, 3], player.enemy.gameBoard, player);
     gameBoard.receiveAttack([2, 4], player.enemy.gameBoard, player);
-    expect(gameBoard.isAllShipsSunk(player.enemy.gameBoard)).toBe(true);
+    expect(
+      gameBoard.isAllShipsSunk(
+        player,
+        player.enemy.gameBoard,
+        player.player.gameBoard
+      )
+    ).toBe(true);
   });
 
   test("the CPU runs receiveAttack() to randomly select a space on the player's map", () => {

@@ -1,6 +1,6 @@
 import './styles/main.css';
 import modalWindow from './modalWindow';
-import { buildGameBoard, determinePlacedShips } from './modifyDOM';
+import { buildGameBoard } from './modifyDOM';
 
 buildGameBoard();
 modalWindow();

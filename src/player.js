@@ -1,19 +1,19 @@
 import GameBoard from './gameBoard';
 
 function Player(playerName) {
-  const test = new GameBoard();
+  const gameBoard = new GameBoard();
   return {
     player: {
-      gameBoard: test.generateGameBoard(),
+      gameBoard: gameBoard.generateGameBoard(),
       name: playerName,
     },
     enemy: {
-      gameBoard: test.generateGameBoard(),
+      gameBoard: gameBoard.generateGameBoard(),
       name: 'CPU',
     },
-    gameBoard: test,
+    gameBoard,
 
-		currentPlayer: playerName
+    currentPlayer: playerName,
   };
 }
 

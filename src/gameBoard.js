@@ -22,7 +22,6 @@ function GameBoard() {
   }
 
   function placeShip(startCoordinate, axis, length, board) {
-    // pass board to place ship on
     if (
       (startCoordinate[0] + length > 10 && axis === 'horizontal') ||
       (startCoordinate[1] + length > 10 && axis === 'vertical')
@@ -35,6 +34,10 @@ function GameBoard() {
       (item) =>
         JSON.stringify(item.coordinate) === JSON.stringify(startCoordinate)
     );
+
+    if (startCell.isPlaced) {
+      return 'ship is here already, cannot place ship';
+    }
 
     const cellsToPlace = [startCell];
 
@@ -78,7 +81,7 @@ function GameBoard() {
       cell.ship = ship;
     });
 
-    // ship.position = cellsToPlace.map((cell) => cell.coordinate);
+    ship.position = cellsToPlace.map((cell) => cell.coordinate);
 
     return {
       ship,
@@ -94,20 +97,14 @@ function GameBoard() {
       { name: 'Submarine', length: 3 },
       { name: 'Frigate', length: 2 },
     ];
-    for (let i = 4; i >= 0; i--) {
+
+    for (let i = 0; i < 5; i++) {
       let shipPlaced = false;
       while (!shipPlaced) {
         const randomCoordinate =
           enemyBoard[generateRandomCoordinate()].coordinate;
         const randomAxis =
           generateRandomCoordinate() % 2 === 0 ? 'vertical' : 'horizontal';
-
-        console.log(
-          `Trying to place: ${ships[i].name} with length: ${ships[i].length}`
-        ); // logging the ship name and length
-        console.log(
-          `Generated coordinate and axis: ${randomCoordinate}, ${randomAxis}`
-        ); // logging the generated coordinate and axis
 
         const result = placeShip(
           randomCoordinate,
@@ -116,14 +113,9 @@ function GameBoard() {
           enemyBoard
         );
 
-        console.log(`Result of placeShip: ${result}`); // logging the result of placeShip function
-
-        // If placeShip returns an object (indicating success), break out of the loop
         if (typeof result === 'object') {
-          console.log(`Successfully placed: ${ships[i].name}`); // logging if the ship was successfully placed
           shipPlaced = true;
         }
-        // If placeShip returns a string (indicating an error), the loop will continue, generating new coordinates and trying again
       }
     }
   }
@@ -143,7 +135,6 @@ function GameBoard() {
   }
 
   function receiveAttackFromCPU(gameBoard) {
-    // pass the entire gameboard, but only use the player part
     const playerBoard = gameBoard.player.gameBoard;
     let randomCoordinate = generateRandomCoordinate();
     while (playerBoard[randomCoordinate].isShot === true) {
@@ -156,10 +147,6 @@ function GameBoard() {
     } else {
       playerBoard[randomCoordinate].isShot = true;
     }
-
-    // if (isAllShipsSunk(playerBoard)) {
-    //   return `${gameBoard.currentPlayer} wins!`;
-    // }
 
     if (gameBoard.currentPlayer === gameBoard.player.name) {
       gameBoard.currentPlayer = gameBoard.enemy.name;
@@ -174,7 +161,6 @@ function GameBoard() {
   }
 
   function receiveAttack(coordinate, enemyboard, gameBoard) {
-    // pass the enemyboard and the entire gameboard
     if (
       coordinate[0] < 0 ||
       coordinate[0] > 10 ||
@@ -189,7 +175,6 @@ function GameBoard() {
     );
 
     if (enemyCell === undefined || enemyCell.isShot) {
-      // enemy cell is shot already or not found
       return {
         coordinate,
         currentPlayer: objGameBoard.currentPlayer,
@@ -203,10 +188,6 @@ function GameBoard() {
       enemyCell.isShot = true;
     }
 
-    // if (isAllShipsSunk(enemyboard)) {
-    //   return `${gameBoard.currentPlayer} wins!`;
-    // }
-
     if (gameBoard.currentPlayer === objGameBoard.player.name) {
       objGameBoard.currentPlayer = objGameBoard.enemy.name;
     } else {
@@ -214,7 +195,6 @@ function GameBoard() {
     }
 
     return {
-      // enemy cell was hit or shot and is found
       enemyCell,
       currentPlayer: objGameBoard.currentPlayer,
     };

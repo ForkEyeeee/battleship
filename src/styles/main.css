@@ -4,9 +4,18 @@
   margin: 0;
 }
 
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 body {
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  background-color: #F5F5FE;
 }
 
 #flex-container {
@@ -51,7 +60,7 @@ body {
 
 .modal {
   display: none;
-  position: fixed;
+  position: absolute;
   z-index: 1;
   left: 0;
   top: 0;
@@ -109,10 +118,9 @@ input[type='radio'] {
 }
 
 .btn-container {
-	display: flex;
-	justify-content: center;
-	/* margin-top: 5px; */
-	margin-right: -91px;
+  display: flex;
+  justify-content: center;
+  margin-right: -91px;
 }
 
 .btn-container button {
@@ -132,13 +140,11 @@ input[type='radio'] {
 
 #win-title {
   display: flex;
-  justify-content: center;
-  margin-top: 10px;
   font-size: 24px;
   font-weight: bold;
+  position: fixed;
+  right: 45.6%;
 }
-
-/* Additional Styles */
 
 #main-container {
   background-color: transparent;
@@ -151,19 +157,15 @@ input[type='radio'] {
   justify-content: center;
 }
 
-/* ... previous styles ... */
-
 .player-title,
 .cpu-title {
-  margin-right: 150px;
-  color: #800080; /* Update the color here */
+  margin-right: 170px;
+  color: #800080;
   font-size: 18px;
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 1px;
 }
-
-/* ... previous styles ... */
 
 .modal-flex {
   display: flex;
@@ -222,9 +224,6 @@ input[type='text'] {
   background-color: #f44336;
 }
 
-/* ... previous styles ... */
-
-/* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
   margin: 22% auto;
@@ -235,7 +234,6 @@ input[type='text'] {
   animation-duration: 0.5s;
 }
 
-/* The Close Button */
 .close {
   color: #aaa;
   float: right;
@@ -296,8 +294,6 @@ button#random-btn:hover {
   background-color: #45a049;
 }
 
-/* Additional Styles */
-
 .modal {
   display: none;
   position: fixed;
@@ -347,8 +343,6 @@ button#random-btn:hover {
   background-color: #45a049;
 }
 
-/* Fixed Grid Positioning */
-
 #flex-container {
   display: flex;
   justify-content: center;
@@ -357,13 +351,4 @@ button#random-btn:hover {
 #main-container {
   margin-left: auto;
   margin-right: auto;
-}
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
